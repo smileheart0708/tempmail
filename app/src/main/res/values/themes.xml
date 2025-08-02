@@ -1,18 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.TempMail" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowLightStatusBar">true</item>
+    <style name="Theme.TempMail" parent="">
+        <!-- This theme is just a placeholder for the manifest. -->
+        <!-- All theming is handled by Jetpack Compose. -->
     </style>
-
-    <style name="Theme.TempMail.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="Theme.TempMail.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
-
-    <style name="Theme.TempMail.PopupOverlay" parent="ThemeOverlay.Material3.Light" />
 </resources>

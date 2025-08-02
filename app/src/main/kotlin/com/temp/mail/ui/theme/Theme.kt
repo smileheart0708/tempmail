@@ -10,6 +10,11 @@ fun TempMailTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
+        colorScheme = if (darkTheme) {
+            androidx.compose.material3.darkColorScheme()
+        } else {
+            androidx.compose.material3.lightColorScheme()
+        },
         content = content
     )
 }

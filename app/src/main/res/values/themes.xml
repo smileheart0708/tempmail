@@ -1,7 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.TempMail" parent="">
-        <!-- This theme is just a placeholder for the manifest. -->
-        <!-- All theming is handled by Jetpack Compose. -->
-    </style>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.TempMail" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

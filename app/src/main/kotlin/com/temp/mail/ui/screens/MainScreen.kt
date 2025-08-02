@@ -1,8 +1,10 @@
 package com.temp.mail.ui.screens
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
@@ -19,19 +21,25 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.temp.mail.R
 import com.temp.mail.ui.components.AppDrawer
+import com.temp.mail.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    viewModel: MainViewModel = viewModel()
+) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -40,6 +48,7 @@ fun MainScreen() {
         }
     ) {
         Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 TopAppBar(
                     title = { Text(text = stringResource(id = R.string.app_name)) },
@@ -53,12 +62,14 @@ fun MainScreen() {
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.Menu,
-                                contentDescription = "Open Navigation Drawer"
+                                contentDescription = stringResource(id = R.string.navigation_drawer_open)
                             )
                         }
                     },
+                    scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        scrolledContainerColor = MaterialTheme.colorScheme.surface
                     )
                 )
             }
@@ -69,18 +80,20 @@ fun MainScreen() {
                     .padding(paddingValues),
                 color = MaterialTheme.colorScheme.background
             ) {
-                Greeting("Android")
+                // Replace static content with a scrollable list
+                // to demonstrate the scroll behavior.
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    items(50) { index ->
+                        Text(
+                            text = "Item #$index",
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Text(
-            text = "Hello $name!",
-            modifier = Modifier.align(Alignment.Center)
-        )
     }
 }

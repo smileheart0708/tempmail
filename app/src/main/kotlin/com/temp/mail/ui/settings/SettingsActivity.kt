@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.temp.mail.R
 import com.temp.mail.ui.theme.TempMailTheme
+import org.koin.androidx.compose.koinViewModel
 
 class SettingsActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -51,11 +52,18 @@ class SettingsActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(paddingValues)) {
                             // Settings content will go here
-                            Text(text = "This is the settings screen.")
+                            SettingsScreen()
                         }
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
+    // For now, just display a text.
+    // Later, we can use the viewModel to manage settings state.
+    Text(text = "This is the settings screen.")
 }

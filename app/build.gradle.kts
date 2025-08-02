@@ -4,7 +4,26 @@ plugins {
     alias(libs.plugins.kotlin.plugin.compose)
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
 android {
+    // Signing Config
+    val signingProps = Properties()
+    val signingPropsFile = file("signing.properties")
+    if (signingPropsFile.exists()) {
+        signingProps.load(FileInputStream(signingPropsFile))
+    }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = signingProps.getProperty("KEY_ALIAS")
+            keyPassword = signingProps.getProperty("KEY_PASSWORD")
+            storeFile = signingProps.getProperty("STORE_FILE")?.let { file(it) }
+            storePassword = signingProps.getProperty("STORE_PASSWORD")
+        }
+    }
+
     namespace = "com.temp.mail"
     compileSdk = 36
 
@@ -25,6 +44,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

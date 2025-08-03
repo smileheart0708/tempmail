@@ -12,6 +12,6 @@ val appModule = module {
     single { SettingsDataStore(androidContext()) }
 
     // ViewModels
-    viewModel { MainViewModel() }
+    viewModel { MainViewModel(androidContext()) }
     viewModel { SettingsViewModel(get()) }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="email_domains">
+        <item>qabq.com</item>
+        <item>nqmo.com</item>
+        <item>end.tw</item>
+        <item>uuf.me</item>
+        <item>6n9.net</item>
+    </string-array>
+</resources>

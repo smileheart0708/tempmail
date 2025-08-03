@@ -19,6 +19,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -38,18 +40,38 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    
+    // 收集数据流
+    val emailAddresses by viewModel.emailAddresses.collectAsState()
+    val selectedEmailAddress by viewModel.selectedEmailAddress.collectAsState()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            AppDrawer()
+            AppDrawer(
+                emailAddresses = emailAddresses,
+                selectedEmailAddress = selectedEmailAddress,
+                onEmailAddressSelected = { emailAddress ->
+                    viewModel.selectEmailAddress(emailAddress)
+                    scope.launch { drawerState.close() }
+                },
+                onAddEmailClick = {
+                    viewModel.addEmailAddress()
+                    scope.launch { drawerState.close() }
+                }
+            )
         }
     ) {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 TopAppBar(
-                    title = { Text(text = stringResource(id = R.string.app_name)) },
+                    title = { 
+                        Text(
+                            text = selectedEmailAddress?.address 
+                                ?: stringResource(id = R.string.app_name)
+                        ) 
+                    },
                     navigationIcon = {
                         IconButton(onClick = {
                             scope.launch {
@@ -78,17 +100,41 @@ fun MainScreen(
                     .padding(paddingValues),
                 color = MaterialTheme.colorScheme.background
             ) {
-                // Replace static content with a scrollable list
-                // to demonstrate the scroll behavior.
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(50) { index ->
-                        Text(
-                            text = "Item #$index",
-                            modifier = Modifier.padding(8.dp)
-                        )
+                val currentEmail = selectedEmailAddress
+                if (currentEmail != null) {
+                    // 显示选中邮箱的内容
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        item {
+                            Text(
+                                text = stringResource(id = R.string.current_email, currentEmail.address),
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+                        }
+                        
+                        items(10) { index ->
+                            Text(
+                                text = stringResource(id = R.string.sample_email_content, index),
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+                    }
+                } else {
+                    // 空状态
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        item {
+                            Text(
+                                text = stringResource(id = R.string.select_email_prompt),
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
                 }
             }

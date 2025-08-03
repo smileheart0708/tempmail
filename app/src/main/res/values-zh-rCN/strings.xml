@@ -2,14 +2,42 @@
 <resources>
     <string name="app_name">临时邮箱</string>
     <string name="navigation_drawer_open">打开导航抽屉</string>
-    <string name="navigation_drawer_close">关闭导航抽屉</string>
-    <string name="menu_home">主页</string>
-    <string name="menu_gallery">相册</string>
-    <string name="menu_slideshow">幻灯片</string>
     <string name="action_settings">设置</string>
     <string name="personalization">个性化设置</string>
     <string name="theme">主题</string>
     <string name="system_default">跟随系统</string>
     <string name="light_mode">浅色模式</string>
     <string name="dark_mode">深色模式</string>
+    
+    <!-- 邮箱相关字符串 -->
+    <string name="email_addresses">邮箱地址</string>
+    <string name="no_email_addresses">暂无邮箱地址</string>
+    <string name="add_email_hint">点击 + 添加新邮箱</string>
+    <string name="add_email">添加邮箱</string>
+    <string name="home">主页</string>
+    <string name="current_email">当前邮箱: %1$s</string>
+    <string name="select_email_prompt">请从侧边栏选择或添加邮箱地址</string>
+    <string name="sample_email_content">邮件 #%1$d - 这里将显示收到的邮件</string>
+    
+    <!-- 临时邮箱服务字符串 -->
+    <string name="generating_email">正在生成临时邮箱…</string>
+    <string name="email_generated">邮箱生成成功</string>
+    <string name="email_generation_failed">邮箱生成失败</string>
+    <string name="refresh_emails">刷新邮件</string>
+    <string name="refreshing_emails">正在刷新邮件…</string>
+    <string name="no_emails_received">暂无收到邮件</string>
+    <string name="emails_count">%1$d 封邮件</string>
+    <string name="email_from">发件人: %1$s</string>
+    <string name="email_subject">主题: %1$s</string>
+    <string name="email_time">时间: %1$s</string>
+    <string name="no_subject">无主题</string>
+    <string name="unknown_sender">未知发件人</string>
+    <string name="loading_email_content">正在加载邮件内容…</string>
+    <string name="email_content_load_failed">邮件内容加载失败</string>
+    <string name="copy_email_address">复制邮箱地址</string>
+    <string name="email_copied">邮箱地址已复制</string>
+    <string name="retry">重试</string>
+    <string name="network_error">网络错误，请检查您的网络连接</string>
+    <string name="pull_to_refresh">下拉刷新</string>
+    <string name="auto_refresh_hint">邮件将自动刷新</string>
 </resources>

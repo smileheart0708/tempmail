@@ -1,14 +1,42 @@
 <resources>
     <string name="app_name">Temp Mail</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
     <string name="action_settings">Settings</string>
     <string name="personalization">Personalization</string>
     <string name="theme">Theme</string>
     <string name="system_default">System</string>
     <string name="light_mode">Light</string>
     <string name="dark_mode">Dark</string>
+    
+    <!-- Email related strings -->
+    <string name="email_addresses">Email Addresses</string>
+    <string name="no_email_addresses">No email addresses</string>
+    <string name="add_email_hint">Click + to add new email</string>
+    <string name="add_email">Add Email</string>
+    <string name="home">Home</string>
+    <string name="current_email">Current email: %1$s</string>
+    <string name="select_email_prompt">Please select or add an email address from the sidebar</string>
+    <string name="sample_email_content">Email #%1$d - Received emails will be shown here</string>
+    
+    <!-- Temp email service strings -->
+    <string name="generating_email">Generating temporary email…</string>
+    <string name="email_generated">Email generated successfully</string>
+    <string name="email_generation_failed">Failed to generate email</string>
+    <string name="refresh_emails">Refresh emails</string>
+    <string name="refreshing_emails">Refreshing emails…</string>
+    <string name="no_emails_received">No emails received yet</string>
+    <string name="emails_count">%1$d emails</string>
+    <string name="email_from">From: %1$s</string>
+    <string name="email_subject">Subject: %1$s</string>
+    <string name="email_time">Time: %1$s</string>
+    <string name="no_subject">No subject</string>
+    <string name="unknown_sender">Unknown sender</string>
+    <string name="loading_email_content">Loading email content…</string>
+    <string name="email_content_load_failed">Failed to load email content</string>
+    <string name="copy_email_address">Copy email address</string>
+    <string name="email_copied">Email address copied</string>
+    <string name="retry">Retry</string>
+    <string name="network_error">Network error, please check your connection</string>
+    <string name="pull_to_refresh">Pull down to refresh</string>
+    <string name="auto_refresh_hint">Emails will refresh automatically</string>
 </resources>

@@ -7,4 +7,9 @@
     <string name="menu_gallery">相册</string>
     <string name="menu_slideshow">幻灯片</string>
     <string name="action_settings">设置</string>
+    <string name="personalization">个性化设置</string>
+    <string name="theme">主题</string>
+    <string name="system_default">跟随系统</string>
+    <string name="light_mode">浅色模式</string>
+    <string name="dark_mode">深色模式</string>
 </resources>

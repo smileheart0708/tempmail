@@ -3,10 +3,28 @@ package com.temp.mail.data.datastore
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 class SettingsDataStore(private val context: Context) {
-    // 在这里添加读取和写入设置的方法
+
+    private object PreferencesKeys {
+        val THEME = stringPreferencesKey("theme")
+    }
+
+    val getTheme: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.THEME] ?: "System"
+        }
+
+    suspend fun setTheme(theme: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.THEME] = theme
+        }
+    }
 }

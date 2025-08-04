@@ -39,7 +39,7 @@ class EmailListViewModel(
         viewModelScope.launch {
             val authToken = tokenRepository.getCurrentToken()
             if (authToken != null) {
-                val baseUrl = "https://api.mail.cx/api/v1" // 根据实际API调整
+                val baseUrl = "https://api.mail.cx/api/v1" // 请求API地址
                 emailRepository.loadEmails(baseUrl, emailAddress, authToken.token)
                 startAutoRefresh()
             } else {

@@ -157,9 +157,12 @@ fun MainScreen(
                 if (currentEmail != null) {
                     val emailListViewModel: EmailListViewModel = koinViewModel(key = currentEmail.address)
                     
-                    // Update the refresh action whenever the selected email changes.
-                    LaunchedEffect(emailListViewModel) {
+                    // Update the refresh action and reset scroll behavior whenever the selected email changes.
+                    LaunchedEffect(currentEmail, scrollBehavior) {
                         onRefreshAction = { emailListViewModel.refreshEmails(currentEmail.address) }
+                        // Reset the scroll behavior to ensure the TopAppBar is visible
+                        scrollBehavior.state.heightOffset = 0f
+                        scrollBehavior.state.contentOffset = 0f
                     }
 
                     EmailListScreen(

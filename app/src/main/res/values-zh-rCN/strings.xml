@@ -10,7 +10,7 @@
     <string name="dark_mode">深色模式</string>
     
     <!-- 邮箱相关字符串 -->
-    <string name="email_addresses">邮箱地址</string>
+    <string name="email_addresses">邮箱</string>
     <string name="no_email_addresses">暂无邮箱地址</string>
     <string name="add_email_hint">点击 + 添加新邮箱</string>
     <string name="add_email">添加邮箱</string>

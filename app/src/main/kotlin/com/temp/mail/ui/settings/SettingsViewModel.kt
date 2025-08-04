@@ -19,9 +19,22 @@ class SettingsViewModel(
             initialValue = "System"
         )
 
+    val isDynamicColor: StateFlow<Boolean> = settingsDataStore.isDynamicColor
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true
+        )
+
     fun setTheme(theme: String) {
         viewModelScope.launch {
             settingsDataStore.setTheme(theme)
+        }
+    }
+
+    fun setDynamicColor(isDynamic: Boolean) {
+        viewModelScope.launch {
+            settingsDataStore.setDynamicColor(isDynamic)
         }
     }
 }

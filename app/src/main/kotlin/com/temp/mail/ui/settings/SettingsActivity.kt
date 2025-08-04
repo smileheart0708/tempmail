@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.runtime.Composable
@@ -42,12 +43,14 @@ class SettingsActivity : ComponentActivity() {
        setContent {
            val viewModel: SettingsViewModel = koinViewModel()
            val theme by viewModel.theme.collectAsState()
+           val isDynamicColor by viewModel.isDynamicColor.collectAsState()
            TempMailTheme(
                darkTheme = when (theme) {
                    "Light" -> false
                    "Dark" -> true
                    else -> resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK == android.content.res.Configuration.UI_MODE_NIGHT_YES
-               }
+               },
+               dynamicColor = isDynamicColor
            ) {
                Surface(
                    modifier = Modifier.fillMaxSize(),
@@ -86,6 +89,7 @@ class SettingsActivity : ComponentActivity() {
 @Composable
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val theme by viewModel.theme.collectAsState()
+    val isDynamicColor by viewModel.isDynamicColor.collectAsState()
     val themes = listOf("System", "Light", "Dark")
     val themeLabels = mapOf(
         "System" to stringResource(id = R.string.system_default),
@@ -125,6 +129,19 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                     }
                 }
             }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = stringResource(id = R.string.dynamic_color))
+            Switch(
+                checked = isDynamicColor,
+                onCheckedChange = { viewModel.setDynamicColor(it) }
+            )
         }
     }
 }

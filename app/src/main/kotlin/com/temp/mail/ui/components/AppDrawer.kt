@@ -57,6 +57,11 @@ fun AppDrawer(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f)
                 )
+                Text(
+                    text = stringResource(id = R.string.create_new_email),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
                 SmallFloatingActionButton(
                     onClick = onAddEmailClick,
                     modifier = Modifier.size(32.dp)

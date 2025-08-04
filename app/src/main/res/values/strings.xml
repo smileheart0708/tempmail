@@ -8,12 +8,14 @@
     <string name="system_default">System</string>
     <string name="light_mode">Light</string>
     <string name="dark_mode">Dark</string>
+    <string name="dynamic_color">Dynamic Color</string>
     
     <!-- Email related strings -->
     <string name="email_addresses">Email Addresses</string>
     <string name="no_email_addresses">No email addresses</string>
     <string name="add_email_hint">Click + to add new email</string>
     <string name="add_email">Add Email</string>
+    <string name="create_new_email">Create new email</string>
     <string name="home">Home</string>
     <string name="current_email">Current email: %1$s</string>
     <string name="select_email_prompt">Please select or add an email address from the sidebar</string>

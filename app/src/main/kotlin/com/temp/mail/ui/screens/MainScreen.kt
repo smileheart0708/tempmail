@@ -38,10 +38,10 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     // This will hold the action to refresh the currently visible email list.
-    var onRefreshAction by remember { mutableStateOf<() -> Unit>({}) }
+    var onRefreshAction by remember { mutableStateOf({}) }
 
     // 收集数据流
     val emailAddresses by mainViewModel.emailAddresses.collectAsState()
@@ -81,18 +81,18 @@ fun MainScreen(
     ) {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
             topBar = {
                 TopAppBar(
                     title = {
                         val currentAddress = selectedEmailAddress?.address
-                        var showSnackbar by remember { mutableStateOf(false) }
+                        var showSnackBar by remember { mutableStateOf(false) }
 
-                        if (showSnackbar) {
+                        if (showSnackBar) {
                             ShowSnackbar(
-                                snackbarHostState = snackbarHostState,
+                                snackBarHostState = snackBarHostState,
                                 message = stringResource(id = R.string.copied_to_clipboard),
-                                onDismiss = { showSnackbar = false }
+                                onDismiss = { showSnackBar = false }
                             )
                         }
 
@@ -103,7 +103,7 @@ fun MainScreen(
                                     val clipboard = context.getSystemService(ClipboardManager::class.java)
                                     val clip = ClipData.newPlainText("Email Address", currentAddress)
                                     clipboard.setPrimaryClip(clip)
-                                    showSnackbar = true
+                                    showSnackBar = true
                                 }
                             } else {
                                 Modifier

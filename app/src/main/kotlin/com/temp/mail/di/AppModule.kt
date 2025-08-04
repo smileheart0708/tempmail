@@ -10,31 +10,34 @@ import com.temp.mail.data.repository.EmailRepositoryImpl
 import com.temp.mail.ui.settings.SettingsViewModel
 import com.temp.mail.ui.viewmodel.MainViewModel
 import com.temp.mail.ui.viewmodel.EmailListViewModel
+import com.temp.mail.ui.viewmodel.EmailDetailViewModel
 import com.temp.mail.util.FileLogger
-import com.temp.mail.util.RefreshManager
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import com.temp.mail.R
 
 val appModule = module {
     // DataStore
     single { SettingsDataStore(androidContext()) }
 
     // Network
+    single { androidContext().getString(R.string.base_url) }
     singleOf(::MailCxApiService)
-    single<MailService> { MailServiceImpl() }
+    single<MailService> { MailServiceImpl(get()) }
 
     // Repositories
-    singleOf(::TokenRepository)
+    single { TokenRepository(get(), androidContext(), get()) }
     single<EmailRepository> { EmailRepositoryImpl(get(), get()) }
 
     // Utils
-    singleOf(::RefreshManager)
     single { FileLogger(androidContext()) }
 
     // ViewModels
     viewModelOf(::MainViewModel)
     viewModelOf(::SettingsViewModel)
     viewModelOf(::EmailListViewModel)
+    viewModelOf(::EmailDetailViewModel)
 }

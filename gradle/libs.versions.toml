@@ -14,6 +14,7 @@ composeBom = "2025.07.00"
 datastore = "1.1.7"
 okhttp = "5.1.0"
 koin = "4.1.0"
+accompanist = "0.34.0"
 [libraries]
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }

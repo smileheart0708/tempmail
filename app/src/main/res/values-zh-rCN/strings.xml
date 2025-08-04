@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="base_url">https://api.mail.cx/api/v1</string>
     <string name="app_name">临时邮箱</string>
     <string name="navigation_drawer_open">打开导航抽屉</string>
     <string name="action_settings">设置</string>
@@ -49,4 +50,10 @@
     <string name="error_title">错误</string>
     <string name="ok">确定</string>
     <string name="copied_to_clipboard">已复制到剪贴板</string>
+
+    <!-- 邮件详情界面字符串 -->
+    <string name="email_details">邮件详情</string>
+    <string name="navigate_up">向上导航</string>
+    <string name="unknown_error">发生未知错误。</string>
+    <string name="no_email_details">无邮件详情。</string>
 </resources>

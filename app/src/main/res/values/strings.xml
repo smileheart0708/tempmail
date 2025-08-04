@@ -1,4 +1,5 @@
 <resources>
+    <string name="base_url">https://api.mail.cx/api/v1</string>
     <string name="app_name">Temp Mail</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="action_settings">Settings</string>
@@ -48,4 +49,10 @@
     <string name="error_title">Error</string>
     <string name="ok">OK</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+
+    <!-- Email detail screen strings -->
+    <string name="email_details">Email Details</string>
+    <string name="navigate_up">Navigate up</string>
+    <string name="unknown_error">An unknown error occurred.</string>
+    <string name="no_email_details">No email details available.</string>
 </resources>

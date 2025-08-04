@@ -13,7 +13,8 @@ import java.util.concurrent.atomic.AtomicReference
 
 class TokenRepository(
     private val apiService: MailCxApiService,
-    private val context: Context
+    private val context: Context,
+    private val baseUrl: String
 ) {
     companion object {
         private const val TAG = "TokenRepository"
@@ -73,7 +74,7 @@ class TokenRepository(
         }
 
         var success = false
-        apiService.fetchRawToken()
+        apiService.fetchRawToken(baseUrl)
             .onSuccess { rawToken ->
                 val cleanedToken = rawToken.trim().trim('"')
                 if (cleanedToken.isNotBlank()) {

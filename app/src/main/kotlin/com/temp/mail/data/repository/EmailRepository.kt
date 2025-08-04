@@ -1,6 +1,7 @@
 package com.temp.mail.data.repository
 
 import com.temp.mail.data.model.Email
+import com.temp.mail.data.model.EmailDetails
 import com.temp.mail.data.network.MailService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +13,8 @@ interface EmailRepository {
     val isLoading: StateFlow<Boolean>
     val error: StateFlow<String?>
     
-    suspend fun loadEmails(baseUrl: String, emailName: String, token: String)
+    suspend fun loadEmails(emailName: String, token: String)
+    suspend fun getEmailDetails(emailName: String, emailId: String, token: String): Result<EmailDetails>
     fun clearEmails()
     fun clearError()
 }
@@ -31,12 +33,12 @@ class EmailRepositoryImpl(
     private val _error = MutableStateFlow<String?>(null)
     override val error: StateFlow<String?> = _error.asStateFlow()
 
-    override suspend fun loadEmails(baseUrl: String, emailName: String, token: String) {
+    override suspend fun loadEmails(emailName: String, token: String) {
         _isLoading.value = true
         _error.value = null
 
         try {
-            val result = mailService.getEmailList(baseUrl, emailName, token)
+            val result = mailService.getEmailList(emailName, token)
             result.onSuccess { emailList ->
                 _emails.value = emailList
             }.onFailure { exception ->
@@ -44,7 +46,7 @@ class EmailRepositoryImpl(
                     if (tokenRepository.refreshToken()) {
                         val newToken = tokenRepository.getCurrentToken()?.token
                         if (newToken != null) {
-                            loadEmails(baseUrl, emailName, newToken)
+                            loadEmails(emailName, newToken)
                         } else {
                             _error.value = "Failed to refresh token"
                         }
@@ -58,6 +60,10 @@ class EmailRepositoryImpl(
         } finally {
             _isLoading.value = false
         }
+    }
+
+    override suspend fun getEmailDetails(emailName: String, emailId: String, token: String): Result<EmailDetails> {
+        return mailService.getEmailDetails(emailName, emailId, token)
     }
 
     override fun clearEmails() {

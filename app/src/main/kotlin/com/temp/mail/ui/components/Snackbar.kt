@@ -8,13 +8,13 @@ import com.temp.mail.R
 
 @Composable
 fun ShowSnackbar(
-    snackbarHostState: SnackbarHostState,
+    snackBarHostState: SnackbarHostState,
     message: String,
     onDismiss: () -> Unit
 ) {
     LaunchedEffect(message) {
         if (message.isNotEmpty()) {
-            snackbarHostState.showSnackbar(message)
+            snackBarHostState.showSnackbar(message)
             onDismiss()
         }
     }

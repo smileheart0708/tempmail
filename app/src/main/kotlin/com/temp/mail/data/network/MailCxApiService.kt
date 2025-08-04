@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 
 class MailCxApiService {
     companion object {
-        private const val BASE_URL = "https://api.mail.cx/api/v1"
         private const val AUTH_ENDPOINT = "/auth/authorize_token"
     }
 
@@ -26,10 +25,10 @@ class MailCxApiService {
         })
         .build()
 
-    suspend fun fetchRawToken(): Result<String> = withContext(Dispatchers.IO) {
+    suspend fun fetchRawToken(baseUrl: String): Result<String> = withContext(Dispatchers.IO) {
         try {
             val request = Request.Builder()
-                .url("$BASE_URL$AUTH_ENDPOINT")
+                .url("$baseUrl$AUTH_ENDPOINT")
                 .post("".toRequestBody(null))
                 .build()
 

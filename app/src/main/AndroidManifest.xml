@@ -25,6 +25,10 @@
             android:name=".ui.settings.SettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.TempMail" />
+        <activity
+            android:name=".ui.EmailDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TempMail" />
     </application>
 
 </manifest>

@@ -6,15 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.temp.mail.data.model.EmailAddress
 import com.temp.mail.data.repository.TokenRepository
 import com.temp.mail.util.EmailGenerator
-import com.temp.mail.util.RefreshManager
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 
 class MainViewModel(
     private val context: Context,
-    private val tokenRepository: TokenRepository,
-    private val refreshManager: RefreshManager
+    private val tokenRepository: TokenRepository
 ) : ViewModel() {
 
     private val _emailAddresses = MutableStateFlow<List<EmailAddress>>(emptyList())
@@ -26,8 +24,6 @@ class MainViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
-    private val _refreshRequest = MutableSharedFlow<String>()
-    val refreshRequest: SharedFlow<String> = _refreshRequest.asSharedFlow()
 
     init {
         // Start refreshing the token as soon as the ViewModel is created.
@@ -83,11 +79,6 @@ class MainViewModel(
         _error.value = null
     }
 
-    fun refreshEmails(emailAddress: String) {
-        viewModelScope.launch {
-            _refreshRequest.emit(emailAddress)
-        }
-    }
 
     override fun onCleared() {
         super.onCleared()

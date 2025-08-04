@@ -2,6 +2,7 @@
 
 package com.temp.mail.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,11 +12,13 @@ import androidx.compose.runtime.*
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.temp.mail.R
 import com.temp.mail.data.model.Email
+import com.temp.mail.ui.EmailDetailActivity
 import com.temp.mail.ui.viewmodel.EmailListViewModel
 import com.temp.mail.util.FileLogger
 import kotlinx.coroutines.launch
@@ -112,9 +115,16 @@ fun EmailListScreen(
                 }
                 else -> {
                     items(emails) { email ->
+                        val context = LocalContext.current
                         EmailItem(
                             email = email,
-                            onClick = { /* TODO: 实现邮件详情 */ }
+                            onClick = {
+                                val intent = Intent(context, EmailDetailActivity::class.java).apply {
+                                    putExtra("EMAIL_ID", email.id)
+                                    putExtra("EMAIL_ADDRESS", emailAddress)
+                                }
+                                context.startActivity(intent)
+                            }
                         )
                     }
                 }

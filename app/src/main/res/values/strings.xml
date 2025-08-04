@@ -39,4 +39,13 @@
     <string name="network_error">Network error, please check your connection</string>
     <string name="pull_to_refresh">Pull down to refresh</string>
     <string name="auto_refresh_hint">Emails will refresh automatically</string>
+    
+    <!-- Email list screen strings -->
+    <string name="back">Back</string>
+    <string name="refresh">Refresh</string>
+    <string name="load_failed">Load failed</string>
+    <string name="new_email">New</string>
+    <string name="error_title">Error</string>
+    <string name="ok">OK</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
 </resources>

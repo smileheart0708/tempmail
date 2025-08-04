@@ -1,49 +1,66 @@
 package com.temp.mail.ui.screens
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import android.content.ClipData
+import android.content.ClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.temp.mail.R
 import com.temp.mail.ui.components.AppDrawer
-import org.koin.androidx.compose.koinViewModel
+import com.temp.mail.ui.components.ShowSnackbar
+import com.temp.mail.ui.viewmodel.EmailListViewModel
 import com.temp.mail.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // This will hold the action to refresh the currently visible email list.
+    var onRefreshAction by remember { mutableStateOf<() -> Unit>({}) }
+
     // 收集数据流
-    val emailAddresses by viewModel.emailAddresses.collectAsState()
-    val selectedEmailAddress by viewModel.selectedEmailAddress.collectAsState()
+    val emailAddresses by mainViewModel.emailAddresses.collectAsState()
+    val selectedEmailAddress by mainViewModel.selectedEmailAddress.collectAsState()
+    val error by mainViewModel.error.collectAsState()
+
+    // Error Dialog
+    if (error != null) {
+        AlertDialog(
+            onDismissRequest = { mainViewModel.clearError() },
+            title = { Text(stringResource(id = R.string.error_title)) },
+            text = { Text(error!!) },
+            confirmButton = {
+                Button(onClick = { mainViewModel.clearError() }) {
+                    Text(stringResource(id = R.string.ok))
+                }
+            }
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -52,11 +69,11 @@ fun MainScreen(
                 emailAddresses = emailAddresses,
                 selectedEmailAddress = selectedEmailAddress,
                 onEmailAddressSelected = { emailAddress ->
-                    viewModel.selectEmailAddress(emailAddress)
+                    mainViewModel.selectEmailAddress(emailAddress)
                     scope.launch { drawerState.close() }
                 },
                 onAddEmailClick = {
-                    viewModel.addEmailAddress()
+                    mainViewModel.addEmailAddress()
                     scope.launch { drawerState.close() }
                 }
             )
@@ -64,13 +81,34 @@ fun MainScreen(
     ) {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = {
                 TopAppBar(
-                    title = { 
+                    title = {
+                        val currentAddress = selectedEmailAddress?.address
+                        var showSnackbar by remember { mutableStateOf(false) }
+
+                        if (showSnackbar) {
+                            ShowSnackbar(
+                                snackbarHostState = snackbarHostState,
+                                message = stringResource(id = R.string.copied_to_clipboard),
+                                onDismiss = { showSnackbar = false }
+                            )
+                        }
+
                         Text(
-                            text = selectedEmailAddress?.address 
-                                ?: stringResource(id = R.string.app_name)
-                        ) 
+                            text = currentAddress ?: stringResource(id = R.string.app_name),
+                            modifier = if (currentAddress != null) {
+                                Modifier.clickable {
+                                    val clipboard = context.getSystemService(ClipboardManager::class.java)
+                                    val clip = ClipData.newPlainText("Email Address", currentAddress)
+                                    clipboard.setPrimaryClip(clip)
+                                    showSnackbar = true
+                                }
+                            } else {
+                                Modifier
+                            }
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = {
@@ -83,6 +121,21 @@ fun MainScreen(
                             Icon(
                                 imageVector = Icons.Filled.Menu,
                                 contentDescription = stringResource(id = R.string.navigation_drawer_open)
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                selectedEmailAddress?.let {
+                                    onRefreshAction()
+                                }
+                            },
+                            enabled = selectedEmailAddress != null
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = stringResource(id = R.string.refresh)
                             )
                         }
                     },
@@ -102,26 +155,17 @@ fun MainScreen(
             ) {
                 val currentEmail = selectedEmailAddress
                 if (currentEmail != null) {
-                    // 显示选中邮箱的内容
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp)
-                    ) {
-                        item {
-                            Text(
-                                text = stringResource(id = R.string.current_email, currentEmail.address),
-                                style = MaterialTheme.typography.headlineSmall,
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            )
-                        }
-                        
-                        items(10) { index ->
-                            Text(
-                                text = stringResource(id = R.string.sample_email_content, index),
-                                modifier = Modifier.padding(8.dp)
-                            )
-                        }
+                    val emailListViewModel: EmailListViewModel = koinViewModel(key = currentEmail.address)
+                    
+                    // Update the refresh action whenever the selected email changes.
+                    LaunchedEffect(emailListViewModel) {
+                        onRefreshAction = { emailListViewModel.refreshEmails(currentEmail.address) }
                     }
+
+                    EmailListScreen(
+                        emailAddress = currentEmail.address,
+                        viewModel = emailListViewModel
+                    )
                 } else {
                     // 空状态
                     LazyColumn(

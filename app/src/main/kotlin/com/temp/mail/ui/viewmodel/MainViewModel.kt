@@ -4,40 +4,45 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.temp.mail.data.model.EmailAddress
+import com.temp.mail.data.repository.TokenRepository
 import com.temp.mail.util.EmailGenerator
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.temp.mail.util.RefreshManager
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.UUID
+import java.util.*
 
 class MainViewModel(
-    private val context: Context
+    private val context: Context,
+    private val tokenRepository: TokenRepository,
+    private val refreshManager: RefreshManager
 ) : ViewModel() {
 
     private val _emailAddresses = MutableStateFlow<List<EmailAddress>>(emptyList())
     val emailAddresses: StateFlow<List<EmailAddress>> = _emailAddresses.asStateFlow()
-    
+
     private val _selectedEmailAddress = MutableStateFlow<EmailAddress?>(null)
     val selectedEmailAddress: StateFlow<EmailAddress?> = _selectedEmailAddress.asStateFlow()
-    
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
+
+    private val _refreshRequest = MutableSharedFlow<String>()
+    val refreshRequest: SharedFlow<String> = _refreshRequest.asSharedFlow()
+
     init {
-        // 示例数据，后续可以从网络或本地存储加载
-        loadSampleData()
-    }
-    
-    private fun loadSampleData() {
+        // Start refreshing the token as soon as the ViewModel is created.
+        tokenRepository.startTokenRefresh()
+        
+        // Observe errors from the TokenRepository.
         viewModelScope.launch {
-            val sampleEmails = List(2) {
-                EmailAddress(
-                    id = UUID.randomUUID().toString(),
-                    address = EmailGenerator.generateRandomEmail(context),
-                    isActive = it == 0
-                )
+            tokenRepository.error.collect { errorMessage ->
+                _error.value = errorMessage
             }
-            _emailAddresses.value = sampleEmails
-            _selectedEmailAddress.value = sampleEmails.firstOrNull { it.isActive }
         }
+        
+        // TODO: Replace with actual logic to load email addresses from a repository.
+        // For now, we'll keep the sample data logic but trigger it from here.
+        loadInitialEmail()
     }
     
     fun selectEmailAddress(emailAddress: EmailAddress) {
@@ -72,6 +77,31 @@ class MainViewModel(
             if (_selectedEmailAddress.value?.id == emailAddress.id) {
                 _selectedEmailAddress.value = _emailAddresses.value.firstOrNull()
             }
+        }
+    }
+    fun clearError() {
+        _error.value = null
+    }
+
+    fun refreshEmails(emailAddress: String) {
+        viewModelScope.launch {
+            _refreshRequest.emit(emailAddress)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // Stop the token refresh when the ViewModel is destroyed to prevent leaks.
+        tokenRepository.stopTokenRefresh()
+    }
+    
+    private fun loadInitialEmail() {
+        // This is a placeholder. In a real app, you would load saved emails.
+        // If no emails exist, you might create one.
+        if (_emailAddresses.value.isEmpty()) {
+            addEmailAddress()
+        } else {
+            _selectedEmailAddress.value = _emailAddresses.value.first()
         }
     }
 }

@@ -6,8 +6,9 @@ import java.util.Random
 
 object EmailGenerator {
 
-    private const val ALLOWED_CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789"
-    private const val USERNAME_LENGTH = 8
+    private const val ALLOWED_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    private const val MIN_USERNAME_LENGTH = 6
+    private const val MAX_USERNAME_LENGTH = 16
 
     fun generateRandomEmail(context: Context): String {
         val domains = context.resources.getStringArray(R.array.email_domains)
@@ -16,8 +17,9 @@ object EmailGenerator {
         }
 
         val random = Random()
-        val username = StringBuilder(USERNAME_LENGTH)
-        repeat(USERNAME_LENGTH) {
+        val usernameLength = random.nextInt(MAX_USERNAME_LENGTH - MIN_USERNAME_LENGTH + 1) + MIN_USERNAME_LENGTH
+        val username = StringBuilder(usernameLength)
+        repeat(usernameLength) {
             username.append(ALLOWED_CHARACTERS[random.nextInt(ALLOWED_CHARACTERS.length)])
         }
 

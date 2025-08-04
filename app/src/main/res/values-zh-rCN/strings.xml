@@ -40,4 +40,13 @@
     <string name="network_error">网络错误，请检查您的网络连接</string>
     <string name="pull_to_refresh">下拉刷新</string>
     <string name="auto_refresh_hint">邮件将自动刷新</string>
+    
+    <!-- 邮件列表界面字符串 -->
+    <string name="back">返回</string>
+    <string name="refresh">刷新</string>
+    <string name="load_failed">加载失败</string>
+    <string name="new_email">新邮件</string>
+    <string name="error_title">错误</string>
+    <string name="ok">确定</string>
+    <string name="copied_to_clipboard">已复制到剪贴板</string>
 </resources>

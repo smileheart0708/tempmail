@@ -38,7 +38,7 @@ class TokenRepository(
                 } catch (e: Exception) {
                     Log.e(TAG, "Token refresh failed", e)
                     // Wait a shorter time before retrying on error
-                    delay(30_000L) // 30 seconds
+                    delay(10_000L) // 10 seconds
                 }
             }
         }
@@ -62,24 +62,25 @@ class TokenRepository(
         return token
     }
 
-    private suspend fun refreshToken() {
+    suspend fun refreshToken(): Boolean {
         Log.d(TAG, "Refreshing token...")
         _error.value = null // Clear previous error
 
         if (!NetworkUtils.isNetworkAvailable(context)) {
             _error.value = "No internet connection"
             Log.w(TAG, "Token refresh skipped: No internet connection.")
-            return
+            return false
         }
 
+        var success = false
         apiService.fetchRawToken()
             .onSuccess { rawToken ->
-                // The raw token is a string with quotes and potentially leading/trailing whitespace (like newlines).
                 val cleanedToken = rawToken.trim().trim('"')
                 if (cleanedToken.isNotBlank()) {
                     val authToken = AuthToken(token = cleanedToken)
                     _currentToken.value = authToken
                     Log.d(TAG, "Token refreshed successfully.")
+                    success = true
                 } else {
                     val errorMessage = "Received empty token"
                     Log.e(TAG, errorMessage)
@@ -90,9 +91,8 @@ class TokenRepository(
                 val errorMessage = error.message ?: "Unknown error while refreshing token"
                 Log.e(TAG, "Failed to refresh token: $errorMessage", error)
                 _error.value = errorMessage
-                // We don't rethrow the error here to prevent crashing the refresh loop.
-                // The error is exposed via the `error` StateFlow.
             }
+        return success
     }
 
     fun cleanup() {

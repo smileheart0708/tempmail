@@ -27,7 +27,7 @@ val appModule = module {
 
     // Repositories
     singleOf(::TokenRepository)
-    single<EmailRepository> { EmailRepositoryImpl(get()) }
+    single<EmailRepository> { EmailRepositoryImpl(get(), get()) }
 
     // Utils
     singleOf(::RefreshManager)

@@ -6,9 +6,8 @@ import com.temp.mail.data.model.Email
 import com.temp.mail.data.repository.EmailRepository
 import com.temp.mail.data.repository.TokenRepository
 import com.temp.mail.util.RefreshManager
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class EmailListViewModel(
     private val emailRepository: EmailRepository,
@@ -20,6 +19,13 @@ class EmailListViewModel(
     val isLoading: StateFlow<Boolean> = emailRepository.isLoading
     val error: StateFlow<String?> = emailRepository.error
 
+    private var autoRefreshJob: Job? = null
+    private var currentEmailAddress: String? = null
+
+    companion object {
+        private const val REFRESH_INTERVAL = 10_000L // 10 seconds
+    }
+
     init {
         viewModelScope.launch {
             refreshManager.refreshRequest.collectLatest { emailAddress ->
@@ -27,30 +33,50 @@ class EmailListViewModel(
             }
         }
     }
-    
+
     fun loadEmails(emailAddress: String) {
+        currentEmailAddress = emailAddress
         viewModelScope.launch {
             val authToken = tokenRepository.getCurrentToken()
             if (authToken != null) {
                 val baseUrl = "https://api.mail.cx/api/v1" // 根据实际API调整
                 emailRepository.loadEmails(baseUrl, emailAddress, authToken.token)
+                startAutoRefresh()
             } else {
                 // 处理token为空的情况
                 emailRepository.clearEmails()
             }
         }
     }
-    
+
     fun refreshEmails(emailAddress: String) {
         loadEmails(emailAddress)
+        resetAutoRefresh()
     }
-    
+
+    private fun startAutoRefresh() {
+        autoRefreshJob?.cancel()
+        autoRefreshJob = viewModelScope.launch {
+            while (isActive) {
+                delay(REFRESH_INTERVAL)
+                currentEmailAddress?.let {
+                    loadEmails(it)
+                }
+            }
+        }
+    }
+
+    private fun resetAutoRefresh() {
+        startAutoRefresh()
+    }
+
     fun clearError() {
         emailRepository.clearError()
     }
-    
+
     override fun onCleared() {
         super.onCleared()
+        autoRefreshJob?.cancel()
         emailRepository.clearEmails()
     }
 }

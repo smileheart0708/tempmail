@@ -2,8 +2,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Made with Kotlin](https://img.shields.io/badge/Made%20with-Kotlin-1f425f.svg?logo=kotlin)](https://kotlinlang.org/)
 
-[![Star History Chart](https://api.star-history.com/svg?repos=smileheart0708/tempmail&type=Date)](https://star-history.com/#smileheart0708/tempmail&Date)
-
 ## 什么是临时邮件或虚拟电子邮件地址？
 
 虚拟邮件或临时邮件是一种允许在临时地址接收电子邮件的服务，该地址在经过一定时间后自行销毁。使用TempMail，您可以立即生成一个一次性邮箱，通过保持真实电子邮件地址的私密性和收件箱不受垃圾邮件的影响而自毁。它也被称为：临时邮件、一次性邮件、虚拟邮件或垃圾邮件。大多数论坛、Wi-Fi运营商、网站和博客要求访问者在访问内容、发表评论或下载内容之前进行注册。TempMail是最先进的一次性电子邮件服务，帮助您避免垃圾邮件并保持安全。
@@ -19,3 +17,5 @@
 ## 临时电子邮件有效期？
 
 我们将消息存储12小时，过期后自动删除消息。电子邮件的域名会不断更新，可能不是长久的，qabq.com 会一直有效，该域名不会消失。发送电子邮件已完全禁用，由于欺诈和垃圾邮件问题，我们不会实施它。
+
+[![Star History Chart](https://api.star-history.com/svg?repos=smileheart0708/tempmail&type=Date)](https://star-history.com/#smileheart0708/tempmail&Date)

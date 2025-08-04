@@ -1,10 +1,8 @@
 package com.temp.mail.data.model
 
-data class EmailBody(
-    val text: String? = null,
-    val html: String? = null
-)
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class EmailDetail(
     val id: String,
     val subject: String,

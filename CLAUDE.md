@@ -2,115 +2,64 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
-
-This is an Android email application built with Kotlin and Jetpack Compose. The project uses modern Android development practices including dependency injection with Koin, DataStore for preferences, and Material 3 design.
-
 ## Build Commands
 
-### Development
-- **Debug build**: `./gradlew assembleDebug`
-- **Release build**: `./gradlew assembleRelease` (or use `Release.bat` on Windows)
-- **Install debug**: `./gradlew installDebug`
-- **Clean build**: `./gradlew clean`
+- `./gradlew assembleDebug` - Build debug APK
+- `./gradlew assembleRelease` - Build release APK (signed with release keystore)
+- `./gradlew clean` - Clean build artifacts
+- `./gradlew build` - Build both debug and release variants
+- `Release.bat` - Convenience script to build release APK
 
-### Testing
-- **Unit tests**: `./gradlew test`
-- **Instrumented tests**: `./gradlew connectedAndroidTest`
-- **Run single test class**: `./gradlew test --tests "com.temp.mail.ExampleUnitTest"`
-- **Run specific test method**: `./gradlew test --tests "*.testMethod"`
+## Test Commands
 
-### Code Quality
-- **Lint**: `./gradlew lint`
-- **Lint with auto-fix**: `./gradlew lintFix`
+- `./gradlew test` - Run unit tests
+- `./gradlew connectedAndroidTest` - Run instrumented tests on connected device/emulator
 
-## Architecture
+## Project Architecture
 
-### Dependency Injection
-- Uses **Koin** for dependency injection
-- Configuration in `di/AppModule.kt`
-- Modules defined for DataStore and ViewModels
+This is an Android Jetpack Compose application for temporary email management with the following architecture:
 
-### Data Layer
-- **DataStore**: Used for app preferences (theme settings)
-- Location: `data/datastore/SettingsDataStore.kt`
-- Stores theme preference with options: "Light", "Dark", "System"
-- **Models**: Email-related data models in `data/model/`
-  - `EmailAddress.kt`: Core email address entity with id, address, active status, and creation timestamp
-  - `Email.kt`: Email list item with id, subject, from, date, read status
-  - `EmailDetail.kt`: Full email content with body (text/html), includes `EmailBody` data class
+### Core Stack
+- **Kotlin** with Coroutines for async operations
+- **Jetpack Compose** for UI (Material 3)
+- **Koin** for dependency injection
+- **OkHttp** for networking
+- **Kotlinx Serialization** for JSON parsing
+- **DataStore** for settings persistence
 
-### UI Layer
-- **Jetpack Compose** with Material 3
-- **MVVM pattern** with ViewModels
-- Main components:
-  - `MainActivity`: Entry point with theme configuration
-  - `MainScreen`: Primary UI with navigation drawer
-  - `AppDrawer`: Navigation drawer with placeholder menu items
-  - `SettingsActivity`: Settings screen (referenced but not fully implemented)
+### Architecture Layers
 
-### Key Components
-- **App.kt**: Application class that initializes Koin
-- **MainViewModel**: Currently minimal, placeholder for main business logic
-- **SettingsViewModel**: Manages theme preferences using DataStore
+1. **UI Layer** (`ui/`)
+   - `MainActivity` - Entry point with theme management
+   - `screens/` - Compose screens (MainScreen, EmailListScreen)
+   - `viewmodel/` - ViewModels for state management
+   - `components/` - Reusable UI components
 
-### Package Structure
-```
-com.temp.mail/
-├── App.kt (Application class)
-├── MainActivity.kt (Main activity)
-├── data/datastore/ (Data persistence)
-├── di/ (Dependency injection)
-├── ui/
-│   ├── components/ (Reusable UI components)
-│   ├── screens/ (Screen composables)
-│   ├── settings/ (Settings-related UI)
-│   ├── theme/ (Theme configuration)
-│   └── viewmodel/ (ViewModels)
-```
+2. **Data Layer** (`data/`)
+   - `repository/` - Repository pattern implementations
+     - `EmailRepository` - Manages email data and loading states
+     - `TokenRepository` - Handles authentication tokens with auto-refresh
+   - `network/` - Network services and API interfaces
+     - `MailService` - Main API service for email operations
+     - `MailCxApiService` - HTTP client wrapper
+   - `model/` - Data models for Email, EmailDetails, AuthToken
+   - `datastore/` - Settings persistence
 
-## Development Configuration
+3. **Dependency Injection** (`di/AppModule.kt`)
+   - Koin module defining all dependencies
+   - Singleton services and ViewModels
+   - Network configuration
 
-### Build Configuration
-- **Compile SDK**: 36
-- **Min SDK**: 25
-- **Target SDK**: 36
-- **Java Version**: 17
-- **Kotlin**: 2.2.0
-- **AGP**: 8.11.0
-- **Version catalogs**: Dependencies managed via `gradle/libs.versions.toml`
+### Key Features
+- Temporary email address generation and management
+- Email list fetching with automatic refresh
+- Email detail viewing
+- Token-based authentication with automatic renewal
+- Settings management with theme switching
+- Comprehensive error handling and logging
 
-### Key Dependencies
-- Jetpack Compose BOM: 2025.07.00
-- Koin: 4.1.0
-- OkHttp: 5.1.0
-- DataStore: 1.1.7
-
-### Signing
-- Release builds use signing configuration from `signing.properties`
-- KeyStore file: `smileheart.jks`
-- ProGuard optimization enabled for release builds
-
-## Development Workflow
-
-### File Organization
-- **Source code**: `app/src/main/kotlin/com/temp/mail/`
-- **Resources**: `app/src/main/res/`
-- **Tests**: `app/src/test/` (unit) and `app/src/androidTest/` (instrumented)
-- **Localization**: Chinese translations available in `values-zh-rCN/`
-
-### When adding new features:
-1. Follow the MVVM pattern with ViewModels for business logic
-2. Use Jetpack Compose for UI components
-3. Register new ViewModels in `di/AppModule.kt` 
-4. Add new data models to `data/model/` package
-5. Use DataStore for persistent app settings
-
-## Notes for Development
-
-- The app currently shows placeholder content (list of numbered items)
-- Navigation drawer has placeholder menu items that need implementation
-- Settings screen exists but needs full implementation
-- Network dependencies (OkHttp) are included but not yet utilized
-- The project follows Material 3 design guidelines
-- Theme switching is implemented and functional
+### Important Implementation Details
+- Token refresh is automatically handled in `EmailRepository` on 401 errors
+- Network requests use Result pattern for error handling
+- File logging is implemented for debugging network issues
+- App uses proper lifecycle management for token cleanup

@@ -26,7 +26,7 @@ val appModule = module {
     // Network
     single { androidContext().getString(R.string.base_url) }
     singleOf(::MailCxApiService)
-    single<MailService> { MailServiceImpl(get()) }
+    single<MailService> { MailServiceImpl(get(), get()) }
 
     // Repositories
     single { TokenRepository(get(), androidContext(), get()) }
@@ -38,6 +38,6 @@ val appModule = module {
     // ViewModels
     viewModelOf(::MainViewModel)
     viewModelOf(::SettingsViewModel)
-    viewModelOf(::EmailListViewModel)
+    singleOf(::EmailListViewModel)
     viewModelOf(::EmailDetailViewModel)
 }

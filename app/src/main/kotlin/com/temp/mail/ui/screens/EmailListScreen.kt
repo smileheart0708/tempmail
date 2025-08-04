@@ -32,7 +32,7 @@ import java.util.Locale
 @Composable
 fun EmailListScreen(
     emailAddress: String,
-    viewModel: EmailListViewModel = koinViewModel(key = emailAddress)
+    viewModel: EmailListViewModel = koinViewModel()
 ) {
     val emails by viewModel.emails.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -40,6 +40,13 @@ fun EmailListScreen(
 
     LaunchedEffect(emailAddress) {
         viewModel.loadEmails(emailAddress)
+    }
+
+    DisposableEffect(viewModel) {
+        viewModel.onActive()
+        onDispose {
+            viewModel.onInactive()
+        }
     }
 
     PullToRefreshBox(

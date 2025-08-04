@@ -30,7 +30,7 @@ class EmailDetailViewModel(
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun loadEmailDetails(emailName: String, emailId: String) {
+    fun loadEmailDetails(emailAddress: String, emailId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
@@ -56,7 +56,7 @@ class EmailDetailViewModel(
                 return@launch
             }
 
-            val result = emailRepository.getEmailDetails(emailName, emailId, token)
+            val result = emailRepository.getEmailDetails(emailAddress, emailId, token)
             result.onSuccess { details ->
                 _emailDetails.value = details
                 // 写入缓存

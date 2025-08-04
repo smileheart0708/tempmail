@@ -11,11 +11,14 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 
 interface MailService {
-    suspend fun getEmailList(emailName: String, token: String): Result<List<Email>>
-    suspend fun getEmailDetails(emailName: String, emailId: String, token: String): Result<EmailDetails>
+    suspend fun getEmailList(emailAddress: String, token: String): Result<List<Email>>
+    suspend fun getEmailDetails(emailAddress: String, emailId: String, token: String): Result<EmailDetails>
 }
 
-class MailServiceImpl(private val baseUrl: String) : MailService {
+class MailServiceImpl(
+    private val baseUrl: String,
+    private val fileLogger: com.temp.mail.util.FileLogger
+) : MailService {
     
     private val json = Json {
         ignoreUnknownKeys = true
@@ -29,11 +32,11 @@ class MailServiceImpl(private val baseUrl: String) : MailService {
         .build()
     
     override suspend fun getEmailList(
-        emailName: String,
+        emailAddress: String,
         token: String
     ): Result<List<Email>> = withContext(Dispatchers.IO) {
         try {
-            val url = "$baseUrl/mailbox/$emailName"
+            val url = "$baseUrl/mailbox/$emailAddress"
             val request = Request.Builder()
                 .url(url)
                 .addHeader("Authorization", "Bearer $token")
@@ -46,19 +49,24 @@ class MailServiceImpl(private val baseUrl: String) : MailService {
                 val emails = json.decodeFromString<List<Email>>(responseBody)
                 Result.success(emails)
             } else {
-                Result.failure(IOException("HTTP ${response.code}: ${response.message}"))
+                val errorBody = response.body?.string()
+                val errorMessage = "HTTP ${response.code}: ${response.message}, URL: $url, Body: $errorBody"
+                val exception = IOException(errorMessage)
+                fileLogger.logError("MailService", "GetEmailList failed", exception)
+                Result.failure(exception)
             }
         } catch (e: Exception) {
+            fileLogger.logError("MailService", "GetEmailList failed with exception", e)
             Result.failure(e)
         }
     }
     override suspend fun getEmailDetails(
-        emailName: String,
+        emailAddress: String,
         emailId: String,
         token: String
     ): Result<EmailDetails> = withContext(Dispatchers.IO) {
         try {
-            val url = "$baseUrl/mailbox/$emailName/$emailId"
+            val url = "$baseUrl/mailbox/$emailAddress/$emailId"
             val request = Request.Builder()
                 .url(url)
                 .addHeader("Authorization", "Bearer $token")
@@ -75,9 +83,14 @@ class MailServiceImpl(private val baseUrl: String) : MailService {
                     Result.failure(IOException("Empty response body"))
                 }
             } else {
-                Result.failure(IOException("HTTP ${response.code}: ${response.message}"))
+                val errorBody = response.body?.string()
+                val errorMessage = "HTTP ${response.code}: ${response.message}, URL: $url, Body: $errorBody"
+                val exception = IOException(errorMessage)
+                fileLogger.logError("MailService", "GetEmailDetails failed", exception)
+                Result.failure(exception)
             }
         } catch (e: Exception) {
+            fileLogger.logError("MailService", "GetEmailDetails failed with exception", e)
             Result.failure(e)
         }
     }

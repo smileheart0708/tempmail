@@ -2,6 +2,7 @@ package com.temp.mail.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ import org.koin.androidx.compose.koinViewModel
 
 class EmailDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         val emailId = intent.getStringExtra("EMAIL_ID")
         val emailAddress = intent.getStringExtra("EMAIL_ADDRESS")
@@ -53,10 +55,7 @@ fun EmailDetailScreen(
 
     androidx.compose.runtime.LaunchedEffect(emailId, emailAddress) {
         if (emailId != null && emailAddress != null) {
-            val emailName = emailAddress.split("@").firstOrNull()
-            if (emailName != null) {
-                viewModel.loadEmailDetails(emailName, emailId)
-            }
+            viewModel.loadEmailDetails(emailAddress, emailId)
         }
     }
 
@@ -102,7 +101,7 @@ fun EmailDetailScreen(
                         update = { webView ->
                             webView.loadDataWithBaseURL(
                                 null,
-                                emailDetails!!.body,
+                                emailDetails!!.body.html ?: "",
                                 "text/html",
                                 "UTF-8",
                                 null

@@ -31,7 +31,7 @@ class EmailListViewModel(
             val authToken = tokenRepository.getCurrentToken()
             if (authToken != null) {
                 emailRepository.loadEmails(emailAddress, authToken.token)
-                startAutoRefresh()
+                onActive()
             } else {
                 // 处理token为空的情况
                 emailRepository.clearEmails()
@@ -41,23 +41,25 @@ class EmailListViewModel(
 
     fun refreshEmails(emailAddress: String) {
         loadEmails(emailAddress)
-        resetAutoRefresh()
     }
 
-    private fun startAutoRefresh() {
+    fun onActive() {
         autoRefreshJob?.cancel()
         autoRefreshJob = viewModelScope.launch {
             while (isActive) {
                 delay(REFRESH_INTERVAL)
                 currentEmailAddress?.let {
-                    loadEmails(it)
+                    val authToken = tokenRepository.getCurrentToken()
+                    if (authToken != null) {
+                        emailRepository.loadEmails(it, authToken.token)
+                    }
                 }
             }
         }
     }
 
-    private fun resetAutoRefresh() {
-        startAutoRefresh()
+    fun onInactive() {
+        autoRefreshJob?.cancel()
     }
 
     fun clearError() {

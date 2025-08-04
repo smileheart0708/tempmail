@@ -98,6 +98,7 @@ fun MainScreen(
 
                         Text(
                             text = currentAddress ?: stringResource(id = R.string.app_name),
+                            style = MaterialTheme.typography.titleMedium,
                             modifier = if (currentAddress != null) {
                                 Modifier.clickable {
                                     val clipboard = context.getSystemService(ClipboardManager::class.java)

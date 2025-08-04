@@ -76,7 +76,7 @@ fun AppDrawer(
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 ) {
-                    items(emailAddresses) { emailAddress ->
+                    items(emailAddresses, key = { it.address }) { emailAddress ->
                         NavigationDrawerItem(
                             icon = { 
                                 Icon(

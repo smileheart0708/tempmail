@@ -26,6 +26,13 @@ class SettingsViewModel(
             initialValue = true
         )
 
+   val isJavaScriptEnabled: StateFlow<Boolean> = settingsDataStore.isJavaScriptEnabled
+       .stateIn(
+           scope = viewModelScope,
+           started = SharingStarted.WhileSubscribed(5_000),
+           initialValue = false
+       )
+
     fun setTheme(theme: String) {
         viewModelScope.launch {
             settingsDataStore.setTheme(theme)
@@ -37,4 +44,10 @@ class SettingsViewModel(
             settingsDataStore.setDynamicColor(isDynamic)
         }
     }
+
+   fun setJavaScriptEnabled(isEnabled: Boolean) {
+       viewModelScope.launch {
+           settingsDataStore.setJavaScriptEnabled(isEnabled)
+       }
+   }
 }

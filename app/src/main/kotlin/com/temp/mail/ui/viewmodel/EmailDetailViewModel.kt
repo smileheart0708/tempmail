@@ -3,12 +3,15 @@ package com.temp.mail.ui.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.temp.mail.data.datastore.SettingsDataStore
 import com.temp.mail.data.model.EmailDetails
 import com.temp.mail.data.repository.EmailRepository
 import com.temp.mail.data.repository.TokenRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -16,8 +19,16 @@ import java.io.File
 class EmailDetailViewModel(
     private val emailRepository: EmailRepository,
     private val tokenRepository: TokenRepository,
+   private val settingsDataStore: SettingsDataStore,
     private val context: Context
 ) : ViewModel() {
+
+   val isJavaScriptEnabled: StateFlow<Boolean> = settingsDataStore.isJavaScriptEnabled
+       .stateIn(
+           scope = viewModelScope,
+           started = SharingStarted.WhileSubscribed(5_000),
+           initialValue = false
+       )
 
     private val _emailDetails = MutableStateFlow<EmailDetails?>(null)
     val emailDetails: StateFlow<EmailDetails?> = _emailDetails.asStateFlow()

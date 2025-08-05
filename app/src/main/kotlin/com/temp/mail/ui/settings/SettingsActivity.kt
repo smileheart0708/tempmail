@@ -44,6 +44,7 @@ class SettingsActivity : ComponentActivity() {
            val viewModel: SettingsViewModel = koinViewModel()
            val theme by viewModel.theme.collectAsState()
            val isDynamicColor by viewModel.isDynamicColor.collectAsState()
+           val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
            TempMailTheme(
                darkTheme = when (theme) {
                    "Light" -> false
@@ -90,6 +91,7 @@ class SettingsActivity : ComponentActivity() {
 fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
     val theme by viewModel.theme.collectAsState()
     val isDynamicColor by viewModel.isDynamicColor.collectAsState()
+   val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
     val themes = listOf("System", "Light", "Dark")
     val themeLabels = mapOf(
         "System" to stringResource(id = R.string.system_default),
@@ -143,5 +145,30 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 onCheckedChange = { viewModel.setDynamicColor(it) }
             )
         }
+       Text(
+           text = stringResource(id = R.string.mail_rendering_settings),
+           style = MaterialTheme.typography.titleSmall,
+           modifier = Modifier.padding(16.dp)
+       )
+       Row(
+           modifier = Modifier
+               .fillMaxWidth()
+               .padding(horizontal = 16.dp),
+           horizontalArrangement = Arrangement.SpaceBetween,
+           verticalAlignment = Alignment.CenterVertically
+       ) {
+           Column {
+               Text(text = stringResource(id = R.string.enable_javascript))
+               Text(
+                   text = stringResource(id = R.string.enable_javascript_summary),
+                   style = MaterialTheme.typography.bodySmall,
+                   color = MaterialTheme.colorScheme.onSurfaceVariant
+               )
+           }
+           Switch(
+               checked = isJavaScriptEnabled,
+               onCheckedChange = { viewModel.setJavaScriptEnabled(it) }
+           )
+       }
     }
 }

@@ -57,4 +57,9 @@
     <string name="navigate_up">Navigate up</string>
     <string name="unknown_error">An unknown error occurred.</string>
     <string name="no_email_details">No email details available.</string>
+
+    <!-- Mail rendering settings -->
+    <string name="mail_rendering_settings">Mail Rendering Settings</string>
+    <string name="enable_javascript">Enable JavaScript</string>
+    <string name="enable_javascript_summary">Enable JavaScript for rendering email content (not recommended)</string>
 </resources>

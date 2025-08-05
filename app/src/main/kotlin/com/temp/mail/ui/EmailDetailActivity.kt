@@ -15,6 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import android.annotation.SuppressLint
+import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.compose.ui.viewinterop.AndroidView
 import com.temp.mail.R
@@ -42,6 +44,7 @@ class EmailDetailActivity : ComponentActivity() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun EmailDetailScreen(
     emailId: String?,
@@ -52,6 +55,7 @@ fun EmailDetailScreen(
     val emailDetails by viewModel.emailDetails.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+   val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
 
     androidx.compose.runtime.LaunchedEffect(emailId, emailAddress) {
         if (emailId != null && emailAddress != null) {
@@ -95,18 +99,30 @@ fun EmailDetailScreen(
                     AndroidView(
                         factory = { context ->
                             WebView(context).apply {
-                                settings.javaScriptEnabled = true
-                            }
-                        },
-                        update = { webView ->
-                            webView.loadDataWithBaseURL(
-                                null,
-                                emailDetails!!.body.html ?: "",
-                                "text/html",
-                                "UTF-8",
-                                null
-                            )
-                        },
+                               settings.apply {
+                                   javaScriptEnabled = isJavaScriptEnabled
+                                   domStorageEnabled = false
+                                   allowFileAccess = false
+                                   allowContentAccess = false
+                                   cacheMode = WebSettings.LOAD_NO_CACHE
+                                   javaScriptCanOpenWindowsAutomatically = false
+                                   blockNetworkImage = false
+                                   loadsImagesAutomatically = true
+                                   mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                               }
+                           }
+                       },
+                       update = { webView ->
+                           emailDetails?.body?.html?.let {
+                               webView.loadDataWithBaseURL(
+                                   null,
+                                   it,
+                                   "text/html",
+                                   "UTF-8",
+                                   null
+                               )
+                           }
+                       },
                         modifier = Modifier.fillMaxSize()
                     )
                 }

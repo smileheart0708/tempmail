@@ -17,6 +17,7 @@ class SettingsDataStore(private val context: Context) {
     private object PreferencesKeys {
         val THEME = stringPreferencesKey("theme")
         val DYNAMIC_COLOR = booleanPreferencesKey("dynamic_color")
+        val JS_ENABLED = booleanPreferencesKey("js_enabled")
     }
 
     val getTheme: Flow<String> = context.dataStore.data
@@ -38,6 +39,17 @@ class SettingsDataStore(private val context: Context) {
     suspend fun setDynamicColor(isDynamic: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.DYNAMIC_COLOR] = isDynamic
+        }
+    }
+
+    val isJavaScriptEnabled: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.JS_ENABLED] ?: false
+        }
+
+    suspend fun setJavaScriptEnabled(isEnabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.JS_ENABLED] = isEnabled
         }
     }
 }

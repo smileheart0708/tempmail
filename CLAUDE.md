@@ -2,64 +2,86 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Build Commands
+## Project Overview
 
-- `./gradlew assembleDebug` - Build debug APK
-- `./gradlew assembleRelease` - Build release APK (signed with release keystore)
-- `./gradlew clean` - Clean build artifacts
-- `./gradlew build` - Build both debug and release variants
-- `Release.bat` - Convenience script to build release APK
+TempMail is an Android application that provides temporary/disposable email services. Users can generate temporary email addresses to avoid spam and protect their privacy when registering for services. The app is built entirely in Kotlin using modern Android architecture patterns.
 
-## Test Commands
+## Build System
 
-- `./gradlew test` - Run unit tests
-- `./gradlew connectedAndroidTest` - Run instrumented tests on connected device/emulator
+This project uses Gradle with Kotlin DSL (.kts files).
 
-## Project Architecture
+### Development Commands
 
-This is an Android Jetpack Compose application for temporary email management with the following architecture:
+- **Build the project**: `./gradlew build`
+- **Clean build**: `./gradlew clean`
+- **Build debug APK**: `./gradlew assembleDebug`
+- **Build release APK**: `./gradlew assembleRelease`
+- **Run tests**: `./gradlew test`
+- **Run instrumented tests**: `./gradlew connectedAndroidTest`
+- **Install debug build**: `./gradlew installDebug`
 
-### Core Stack
-- **Kotlin** with Coroutines for async operations
-- **Jetpack Compose** for UI (Material 3)
-- **Koin** for dependency injection
-- **OkHttp** for networking
-- **Kotlinx Serialization** for JSON parsing
-- **DataStore** for settings persistence
+### Release Build
 
-### Architecture Layers
+The project has signing configuration in `app/signing.properties`. Use `Release.bat` for automated release builds.
 
-1. **UI Layer** (`ui/`)
-   - `MainActivity` - Entry point with theme management
-   - `screens/` - Compose screens (MainScreen, EmailListScreen)
-   - `viewmodel/` - ViewModels for state management
-   - `components/` - Reusable UI components
+## Architecture
 
-2. **Data Layer** (`data/`)
-   - `repository/` - Repository pattern implementations
-     - `EmailRepository` - Manages email data and loading states
-     - `TokenRepository` - Handles authentication tokens with auto-refresh
-   - `network/` - Network services and API interfaces
-     - `MailService` - Main API service for email operations
-     - `MailCxApiService` - HTTP client wrapper
-   - `model/` - Data models for Email, EmailDetails, AuthToken
-   - `datastore/` - Settings persistence
+### Technology Stack
 
-3. **Dependency Injection** (`di/AppModule.kt`)
-   - Koin module defining all dependencies
-   - Singleton services and ViewModels
-   - Network configuration
+- **UI Framework**: Jetpack Compose with Material3
+- **Architecture**: MVVM with Repository pattern
+- **Dependency Injection**: Koin 4.1.0
+- **Networking**: OkHttp 5.1.0 with custom API service
+- **Data Storage**: DataStore Preferences
+- **Serialization**: Kotlinx Serialization
+- **Build Target**: Android API 36, minimum API 26
 
-### Key Features
-- Temporary email address generation and management
-- Email list fetching with automatic refresh
-- Email detail viewing
-- Token-based authentication with automatic renewal
-- Settings management with theme switching
-- Comprehensive error handling and logging
+### Project Structure
 
-### Important Implementation Details
-- Token refresh is automatically handled in `EmailRepository` on 401 errors
-- Network requests use Result pattern for error handling
-- File logging is implemented for debugging network issues
-- App uses proper lifecycle management for token cleanup
+```
+app/src/main/kotlin/com/temp/mail/
+├── data/
+│   ├── datastore/          # Settings persistence
+│   ├── model/              # Data models (Email, AuthToken, etc.)
+│   ├── network/            # API services and networking
+│   └── repository/         # Repository implementations
+├── di/                     # Dependency injection modules
+├── ui/
+│   ├── components/         # Reusable UI components
+│   ├── screens/            # Compose screens
+│   ├── settings/           # Settings UI and ViewModels
+│   ├── theme/              # Material3 theming
+│   └── viewmodel/          # ViewModels for screens
+└── util/                   # Utilities (logging, email generation, etc.)
+```
+
+### Key Architecture Components
+
+1. **Repository Pattern**: `EmailRepository` and `TokenRepository` handle data operations
+2. **Token Management**: Automatic token refresh with `TokenRepository.startTokenRefresh()`
+3. **StateFlow**: Reactive state management throughout the app
+4. **Koin DI**: All dependencies configured in `di/AppModule.kt`
+5. **MailService**: Abstracted API layer with automatic token refresh on 401 errors
+
+### Data Flow
+
+1. `App.kt` initializes Koin and starts token management
+2. ViewModels observe repositories via StateFlow
+3. Repositories handle API calls and automatic token refresh
+4. UI components observe ViewModels for reactive updates
+
+## API Integration
+
+The app integrates with mail.cx API service:
+- Base URL configured in `strings.xml`
+- Automatic token refresh on authentication failures
+- Email list and detail retrieval
+- Token management with cleanup on app termination
+
+## Important Files
+
+- `App.kt`: Application class with DI initialization
+- `di/AppModule.kt`: Koin dependency injection configuration
+- `data/repository/EmailRepository.kt`: Core email data operations
+- `data/repository/TokenRepository.kt`: Authentication token management
+- `data/network/MailService.kt`: API service abstraction

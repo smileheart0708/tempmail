@@ -58,4 +58,9 @@
     <string name="navigate_up">向上导航</string>
     <string name="unknown_error">发生未知错误。</string>
     <string name="no_email_details">无邮件详情。</string>
+
+    <!-- 邮件渲染设置 -->
+    <string name="mail_rendering_settings">邮件渲染设置</string>
+    <string name="enable_javascript">启用JS脚本</string>
+    <string name="enable_javascript_summary">启用JavaScript渲染邮件内容（不推荐）</string>
 </resources>

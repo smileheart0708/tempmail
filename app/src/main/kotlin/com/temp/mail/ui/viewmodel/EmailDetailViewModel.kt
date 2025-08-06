@@ -47,7 +47,7 @@ class EmailDetailViewModel(
             _error.value = null
 
             // 1. 检查缓存
-            val cacheFile = File(context.cacheDir, "$emailId.json")
+            val cacheFile = File(context.externalCacheDir, "$emailId.json")
             if (cacheFile.exists()) {
                 try {
                     val cachedDetails = json.decodeFromString<EmailDetails>(cacheFile.readText())

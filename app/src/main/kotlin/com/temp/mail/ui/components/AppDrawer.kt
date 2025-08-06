@@ -1,6 +1,7 @@
 package com.temp.mail.ui.components
 
 import android.content.Intent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -81,7 +82,8 @@ fun AppDrawer(
             // 邮箱地址列表
             if (emailAddresses.isNotEmpty()) {
                 LazyColumn(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     items(emailAddresses, key = { it.address }) { emailAddress ->
                         NavigationDrawerItem(
@@ -137,10 +139,6 @@ fun AppDrawer(
                     )
                 }
             }
-
-            HorizontalDivider()
-
-            // 主页导航项已被移除
 
             // 历史邮件和设置项
             val context = LocalContext.current

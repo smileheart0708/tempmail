@@ -30,12 +30,14 @@ class EmailDetailActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val emailId = intent.getStringExtra("EMAIL_ID")
         val emailAddress = intent.getStringExtra("EMAIL_ADDRESS")
+        val isHistory = intent.getBooleanExtra("IS_HISTORY", false)
 
         setContent {
             TempMailTheme {
                 EmailDetailScreen(
                     emailId = emailId,
                     emailAddress = emailAddress,
+                    isHistory = isHistory,
                     onNavigateUp = { finish() }
                 )
             }
@@ -49,17 +51,18 @@ class EmailDetailActivity : ComponentActivity() {
 fun EmailDetailScreen(
     emailId: String?,
     emailAddress: String?,
+    isHistory: Boolean,
     viewModel: EmailDetailViewModel = koinViewModel(),
     onNavigateUp: () -> Unit
 ) {
     val emailDetails by viewModel.emailDetails.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
-   val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
+    val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
 
-    androidx.compose.runtime.LaunchedEffect(emailId, emailAddress) {
-        if (emailId != null && emailAddress != null) {
-            viewModel.loadEmailDetails(emailAddress, emailId)
+    androidx.compose.runtime.LaunchedEffect(emailId, emailAddress, isHistory) {
+        if (emailId != null) {
+            viewModel.loadEmailDetails(emailAddress, emailId, isHistory)
         }
     }
 

@@ -41,41 +41,30 @@ class EmailDetailViewModel(
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    fun loadEmailDetails(emailAddress: String, emailId: String) {
+    fun loadEmailDetails(emailAddress: String?, emailId: String, isHistory: Boolean) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
-            // 1. 检查缓存
-            val cacheFile = File(context.externalCacheDir, "$emailId.json")
-            if (cacheFile.exists()) {
-                try {
-                    val cachedDetails = json.decodeFromString<EmailDetails>(cacheFile.readText())
-                    _emailDetails.value = cachedDetails
+            val result = if (isHistory) {
+                emailRepository.getHistoryEmailDetails(emailId)
+            } else {
+                if (emailAddress == null) {
+                    _error.value = "Email address is required."
                     _isLoading.value = false
                     return@launch
-                } catch (e: Exception) {
-                    // 缓存解析失败，继续从网络加载
                 }
+                val token = tokenRepository.getCurrentToken()?.token
+                if (token == null) {
+                    _error.value = "No valid token found."
+                    _isLoading.value = false
+                    return@launch
+                }
+                emailRepository.getEmailDetails(emailAddress, emailId, token)
             }
 
-            // 2. 从网络获取
-            val token = tokenRepository.getCurrentToken()?.token
-            if (token == null) {
-                _error.value = "No valid token found."
-                _isLoading.value = false
-                return@launch
-            }
-
-            val result = emailRepository.getEmailDetails(emailAddress, emailId, token)
             result.onSuccess { details ->
                 _emailDetails.value = details
-                // 写入缓存
-                try {
-                    cacheFile.writeText(json.encodeToString(EmailDetails.serializer(), details))
-                } catch (e: Exception) {
-                    // 缓存写入失败，可以记录日志，但不影响UI
-                }
             }.onFailure { exception ->
                 _error.value = exception.message ?: "An unknown error occurred."
             }

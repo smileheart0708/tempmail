@@ -11,6 +11,7 @@ import com.temp.mail.ui.settings.SettingsViewModel
 import com.temp.mail.ui.viewmodel.MainViewModel
 import com.temp.mail.ui.viewmodel.EmailListViewModel
 import com.temp.mail.ui.viewmodel.EmailDetailViewModel
+import com.temp.mail.ui.history.HistoryViewModel
 import com.temp.mail.util.FileLogger
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
@@ -30,7 +31,7 @@ val appModule = module {
 
     // Repositories
     single { TokenRepository(get(), androidContext(), get()) }
-    single<EmailRepository> { EmailRepositoryImpl(get(), get()) }
+    single<EmailRepository> { EmailRepositoryImpl(get(), get(), androidContext()) }
 
     // Utils
     single { FileLogger(androidContext()) }
@@ -40,4 +41,5 @@ val appModule = module {
     viewModelOf(::SettingsViewModel)
     singleOf(::EmailListViewModel)
     viewModelOf(::EmailDetailViewModel)
+    viewModelOf(::HistoryViewModel)
 }

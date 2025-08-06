@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.temp.mail.R
 import com.temp.mail.data.model.EmailAddress
 import com.temp.mail.ui.settings.SettingsActivity
+import com.temp.mail.ui.history.HistoryActivity
 
 @Composable
 fun AppDrawer(
@@ -140,17 +142,28 @@ fun AppDrawer(
 
             // 主页导航项已被移除
 
-            // 设置项
+            // 历史邮件和设置项
             val context = LocalContext.current
-            NavigationDrawerItem(
-                icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                label = { Text(stringResource(id = R.string.action_settings)) },
-                selected = false,
-                onClick = {
-                    context.startActivity(Intent(context, SettingsActivity::class.java))
-                },
-                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-            )
+            Row(modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)) {
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
+                    label = { Text(stringResource(id = R.string.history_mails)) },
+                    selected = false,
+                    onClick = {
+                        context.startActivity(Intent(context, HistoryActivity::class.java))
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
+                    label = { Text(stringResource(id = R.string.action_settings)) },
+                    selected = false,
+                    onClick = {
+                        context.startActivity(Intent(context, SettingsActivity::class.java))
+                    },
+                    modifier = Modifier.weight(1f)
+                )
+            }
             Spacer(modifier = Modifier.height(12.dp))
         }
     }

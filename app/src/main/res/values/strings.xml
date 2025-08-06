@@ -58,6 +58,10 @@
     <string name="unknown_error">An unknown error occurred.</string>
     <string name="no_email_details">No email details available.</string>
 
+    <!-- History mails -->
+    <string name="history_mails">History Mails</string>
+    <string name="no_history_mails">No history mails</string>
+
     <!-- Mail rendering settings -->
     <string name="mail_rendering_settings">Mail Rendering Settings</string>
     <string name="enable_javascript">Enable JavaScript</string>

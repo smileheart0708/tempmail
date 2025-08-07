@@ -1,6 +1,5 @@
 package com.temp.mail.ui.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.temp.mail.data.datastore.SettingsDataStore
@@ -13,22 +12,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import java.io.File
-
 class EmailDetailViewModel(
     private val emailRepository: EmailRepository,
     private val tokenRepository: TokenRepository,
-   private val settingsDataStore: SettingsDataStore,
-    private val context: Context
+    settingsDataStore: SettingsDataStore,
 ) : ViewModel() {
 
-   val isJavaScriptEnabled: StateFlow<Boolean> = settingsDataStore.isJavaScriptEnabled
-       .stateIn(
-           scope = viewModelScope,
-           started = SharingStarted.WhileSubscribed(5_000),
-           initialValue = false
-       )
+    val isJavaScriptEnabled: StateFlow<Boolean> = settingsDataStore.isJavaScriptEnabled
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
+        )
 
     private val _emailDetails = MutableStateFlow<EmailDetails?>(null)
     val emailDetails: StateFlow<EmailDetails?> = _emailDetails.asStateFlow()
@@ -39,12 +34,10 @@ class EmailDetailViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
-    private val json = Json { ignoreUnknownKeys = true }
-
     fun loadEmailDetails(emailAddress: String?, emailId: String, isHistory: Boolean) {
         viewModelScope.launch {
             _isLoading.value = true
-            _error.value = null
+            _error.value = null // 在开始加载时重置错误状态
 
             val result = if (isHistory) {
                 emailRepository.getHistoryEmailDetails(emailId)
@@ -73,7 +66,4 @@ class EmailDetailViewModel(
         }
     }
 
-    fun clearError() {
-        _error.value = null
-    }
 }

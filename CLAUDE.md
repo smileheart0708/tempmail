@@ -15,10 +15,12 @@ This project uses Gradle with Kotlin DSL (.kts files).
 - **Build the project**: `./gradlew build`
 - **Clean build**: `./gradlew clean`
 - **Build debug APK**: `./gradlew assembleDebug`
-- **Build release APK**: `./gradlew assembleRelease`
+- **Build release APK**: `./gradlew assembleRelease` or use `Release.bat`
 - **Run tests**: `./gradlew test`
 - **Run instrumented tests**: `./gradlew connectedAndroidTest`
 - **Install debug build**: `./gradlew installDebug`
+- **Run single test**: `./gradlew test --tests "ClassName.testMethodName"`
+- **Run tests with coverage**: `./gradlew testDebugUnitTestCoverage`
 
 ### Release Build
 
@@ -70,6 +72,18 @@ app/src/main/kotlin/com/temp/mail/
 3. Repositories handle API calls and automatic token refresh
 4. UI components observe ViewModels for reactive updates
 
+### Critical Implementation Details
+
+1. **Token Lifecycle**: `TokenRepository` runs a background coroutine refreshing tokens every 290 seconds, handles network failures with 10-second retry intervals, and includes proper cleanup in `App.onTerminate()`
+
+2. **Email Caching**: `EmailRepository` automatically caches email details to device storage (`context.cacheDir`) in JSON format for offline history access
+
+3. **Error Handling**: Repositories implement automatic token refresh on 401 errors with fallback error propagation via StateFlow
+
+4. **Dependency Injection**: App uses Koin with single instance repositories and scoped ViewModels. ViewModels are mixed between `viewModelOf()` and `singleOf()` patterns
+
+5. **Network Layer**: `MailService` abstraction with concrete `MailServiceImpl` provides automatic retry logic on authentication failures
+
 ## API Integration
 
 The app integrates with mail.cx API service:
@@ -80,8 +94,8 @@ The app integrates with mail.cx API service:
 
 ## Important Files
 
-- `App.kt`: Application class with DI initialization
-- `di/AppModule.kt`: Koin dependency injection configuration
-- `data/repository/EmailRepository.kt`: Core email data operations
-- `data/repository/TokenRepository.kt`: Authentication token management
-- `data/network/MailService.kt`: API service abstraction
+- `App.kt`: Application class with DI initialization and token lifecycle management
+- `di/AppModule.kt`: Koin dependency injection configuration with all singletons and ViewModels
+- `data/repository/EmailRepository.kt`: Core email data operations with caching and error handling
+- `data/repository/TokenRepository.kt`: Authentication token management with background refresh coroutine
+- `data/network/MailService.kt`: API service abstraction with retry logic

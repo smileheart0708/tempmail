@@ -1,6 +1,5 @@
 package com.temp.mail.data.network
 
-import com.temp.mail.data.model.AuthToken
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody

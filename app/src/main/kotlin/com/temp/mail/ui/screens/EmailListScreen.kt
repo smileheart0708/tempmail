@@ -6,6 +6,8 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
@@ -24,7 +26,8 @@ import com.temp.mail.util.FileLogger
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
-import java.time.ZonedDateTime
+import java.time.Instant
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -106,12 +109,18 @@ fun EmailListScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = stringResource(R.string.no_emails_received),
+                                modifier = Modifier.size(128.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
                             Text(
                                 text = stringResource(R.string.no_emails_received),
-                                style = MaterialTheme.typography.headlineSmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = stringResource(R.string.auto_refresh_hint),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -147,9 +156,10 @@ fun EmailItem(
 ) {
     val fileLogger: FileLogger = koinInject()
     val coroutineScope = rememberCoroutineScope()
-    val (formattedDate, formattedTime) = remember(email.date, fileLogger, coroutineScope) {
+    val (formattedDate, formattedTime) = remember(email.date) {
         try {
-            val zonedDateTime = ZonedDateTime.parse(email.date)
+            val instant = Instant.parse(email.date)
+            val zonedDateTime = instant.atZone(ZoneId.systemDefault())
             val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())
             val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss", Locale.getDefault())
             Pair(zonedDateTime.format(dateFormatter), zonedDateTime.format(timeFormatter))

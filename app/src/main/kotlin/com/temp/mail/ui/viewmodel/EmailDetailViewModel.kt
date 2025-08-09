@@ -34,10 +34,14 @@ class EmailDetailViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
+    private val _verificationCode = MutableStateFlow<String?>(null)
+    val verificationCode: StateFlow<String?> = _verificationCode.asStateFlow()
+
     fun loadEmailDetails(emailAddress: String?, emailId: String, isHistory: Boolean) {
         viewModelScope.launch {
             _isLoading.value = true
-            _error.value = null // 在开始加载时重置错误状态
+            _error.value = null
+            _verificationCode.value = null
 
             val result = if (isHistory) {
                 emailRepository.getHistoryEmailDetails(emailId)
@@ -58,6 +62,9 @@ class EmailDetailViewModel(
 
             result.onSuccess { details ->
                 _emailDetails.value = details
+                details.body?.html?.let {
+                    _verificationCode.value = extractVerificationCode(it)
+                }
             }.onFailure { exception ->
                 _error.value = exception.message ?: "An unknown error occurred."
             }
@@ -66,4 +73,17 @@ class EmailDetailViewModel(
         }
     }
 
+    private fun extractVerificationCode(htmlContent: String): String? {
+        val regex = """>\s*([a-zA-Z0-9]{6})\s*<|([a-zA-Z0-9]{6})(?:</span>|</p>)""".toRegex()
+        return regex.findAll(htmlContent)
+            .lastOrNull()
+            ?.groupValues
+            ?.drop(1) // Skip the full match
+            ?.firstOrNull { it.isNotEmpty() }
+    }
+
+    fun copyVerificationCodeToClipboard() {
+        // This function is intentionally left blank.
+        // The actual clipboard logic will be handled in the UI layer.
+    }
 }

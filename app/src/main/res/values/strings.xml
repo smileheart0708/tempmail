@@ -57,6 +57,8 @@
     <string name="navigate_up">Navigate up</string>
     <string name="unknown_error">An unknown error occurred.</string>
     <string name="no_email_details">No email details available.</string>
+    <string name="copy_verification_code">Copy code</string>
+    <string name="verification_code_copied">Verification code \"%1$s\" copied to clipboard</string>
 
     <!-- History mails -->
     <string name="history_mails">History Mails</string>

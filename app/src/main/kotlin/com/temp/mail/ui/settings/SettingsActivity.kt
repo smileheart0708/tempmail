@@ -44,7 +44,6 @@ class SettingsActivity : ComponentActivity() {
            val viewModel: SettingsViewModel = koinViewModel()
            val theme by viewModel.theme.collectAsState()
            val isDynamicColor by viewModel.isDynamicColor.collectAsState()
-           val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
            TempMailTheme(
                darkTheme = when (theme) {
                    "Light" -> false

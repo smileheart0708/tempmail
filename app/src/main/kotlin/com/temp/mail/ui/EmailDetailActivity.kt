@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +24,11 @@ import com.temp.mail.R
 import com.temp.mail.ui.theme.TempMailTheme
 import com.temp.mail.ui.viewmodel.EmailDetailViewModel
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import kotlinx.coroutines.launch
 
 class EmailDetailActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +65,10 @@ fun EmailDetailScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
     val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
+    val verificationCode by viewModel.verificationCode.collectAsState()
+    val clipboardManager = LocalClipboardManager.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     androidx.compose.runtime.LaunchedEffect(emailId, emailAddress, isHistory) {
         if (emailId != null) {
@@ -67,6 +77,7 @@ fun EmailDetailScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(text = emailDetails?.subject ?: stringResource(id = R.string.email_details)) },
@@ -76,6 +87,24 @@ fun EmailDetailScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.navigate_up)
                         )
+                    }
+                },
+                actions = {
+                    if (verificationCode != null) {
+                        IconButton(onClick = {
+                            clipboardManager.setText(AnnotatedString(verificationCode!!))
+                            scope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = stringResource(id = R.string.verification_code_copied, verificationCode!!),
+                                    duration = SnackbarDuration.Short
+                                )
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.ContentCopy,
+                                contentDescription = stringResource(id = R.string.copy_verification_code)
+                            )
+                        }
                     }
                 }
             )

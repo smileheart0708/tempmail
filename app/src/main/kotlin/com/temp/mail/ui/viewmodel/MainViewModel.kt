@@ -26,7 +26,6 @@ class MainViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
-
     init {
         // Start refreshing the token as soon as the ViewModel is created.
         tokenRepository.startTokenRefresh()
@@ -78,16 +77,9 @@ class MainViewModel(
         }
     }
 
-    fun clearEmailsForSelectedAddress() {
-        viewModelScope.launch {
-            emailRepository.clearAllEmailCache()
-        }
-    }
-
     fun clearError() {
         _error.value = null
     }
-
 
     override fun onCleared() {
         super.onCleared()

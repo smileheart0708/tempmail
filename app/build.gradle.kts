@@ -33,7 +33,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 20250809
-        versionName = "1.2.0"
+        versionName = "1.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,13 +53,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
     kotlin {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        }
+        lint {
+            // This is intentionally left empty to resolve a Gradle deprecation warning.
         }
     }
     buildFeatures {

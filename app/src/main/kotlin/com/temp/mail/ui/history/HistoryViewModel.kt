@@ -5,23 +5,31 @@ import androidx.lifecycle.viewModelScope
 import com.temp.mail.data.model.Email
 import com.temp.mail.data.repository.EmailRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(private val emailRepository: EmailRepository) : ViewModel() {
+
     private val _historyMails = MutableStateFlow<List<Email>>(emptyList())
-    val historyMails = _historyMails.asStateFlow()
+    val historyMails: StateFlow<List<Email>> = _historyMails.asStateFlow()
 
     init {
-        loadHistory()
+        loadHistoryMails()
     }
 
-    private fun loadHistory() {
+    private fun loadHistoryMails() {
         viewModelScope.launch {
-            val result = emailRepository.loadHistoryEmails()
-            result.onSuccess {
+            emailRepository.loadHistoryEmails().onSuccess {
                 _historyMails.value = it
             }
+        }
+    }
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            emailRepository.clearHistory()
+            loadHistoryMails()
         }
     }
 }

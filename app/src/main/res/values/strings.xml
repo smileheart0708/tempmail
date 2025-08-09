@@ -69,9 +69,15 @@
    <string name="cancel">Cancel</string>
    <string name="clear_all_emails">Clear all emails</string>
    <string name="clear_all_emails_confirmation">Are you sure you want to clear all emails? This action cannot be undone.</string>
+   <string name="clear_history">Clear History</string>
+   <string name="clear_history_confirmation">Are you sure you want to clear all history emails? This action cannot be undone.</string>
 
     <!-- Mail rendering settings -->
     <string name="mail_rendering_settings">Mail Rendering Settings</string>
     <string name="enable_javascript">Enable JavaScript</string>
     <string name="enable_javascript_summary">Enable JavaScript for rendering email content (not recommended)</string>
+    <string name="github">About</string>
+    <string name="from_sender_format">From: %1$s</string>
+    <string name="source_code">About</string>
+    <string name="about_app">About this App</string>
 </resources>

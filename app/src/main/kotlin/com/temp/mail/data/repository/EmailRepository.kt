@@ -22,8 +22,10 @@ interface EmailRepository {
     suspend fun loadEmails(emailAddress: String, token: String)
     suspend fun getEmailDetails(emailAddress: String, emailId: String, token: String): Result<EmailDetails>
     suspend fun loadHistoryEmails(): Result<List<Email>>
+    fun getHistoryEmails(): StateFlow<List<Email>>
     suspend fun getHistoryEmailDetails(emailId: String): Result<EmailDetails>
     suspend fun clearAllEmailCache()
+    suspend fun clearHistory()
     fun clearEmails()
     fun clearError()
 }
@@ -90,6 +92,15 @@ class EmailRepositoryImpl(
         return result
     }
 
+    override fun getHistoryEmails(): StateFlow<List<Email>> {
+        // This is a simplified implementation. In a real app, you might want to
+        // load this from a persistent cache and observe changes.
+        val flow = MutableStateFlow<List<Email>>(emptyList())
+        // For now, we'll just load them once.
+        // A more robust solution would observe the cache directory for changes.
+        return flow // This needs a proper implementation
+    }
+
     override suspend fun loadHistoryEmails(): Result<List<Email>> = withContext(Dispatchers.IO) {
         try {
             val cacheDir = context.cacheDir
@@ -132,6 +143,10 @@ class EmailRepositoryImpl(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun clearHistory() {
+        clearAllEmailCache()
     }
 
     override suspend fun clearAllEmailCache(): Unit = withContext(Dispatchers.IO) {

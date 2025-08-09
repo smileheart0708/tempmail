@@ -66,6 +66,12 @@ class EmailListViewModel(
         emailRepository.clearError()
     }
 
+    fun clearEmails(emailAddress: String) {
+        viewModelScope.launch {
+            emailRepository.clearEmails()
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         autoRefreshJob?.cancel()

@@ -40,7 +40,7 @@ fun MainScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
-    var showClearDialog by remember { mutableStateOf(false) }
+    
 
     // This will hold the action to refresh the currently visible email list.
     var onRefreshAction by remember { mutableStateOf({}) }
@@ -64,28 +64,6 @@ fun MainScreen(
         )
     }
 
-    if (showClearDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearDialog = false },
-            title = { Text(stringResource(id = R.string.clear_all_emails)) },
-            text = { Text(stringResource(id = R.string.clear_all_emails_confirmation)) },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        mainViewModel.clearEmailsForSelectedAddress()
-                        showClearDialog = false
-                    }
-                ) {
-                    Text(stringResource(id = R.string.clear))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showClearDialog = false }) {
-                    Text(stringResource(id = R.string.cancel))
-                }
-            }
-        )
-    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -151,28 +129,6 @@ fun MainScreen(
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = {
-                                selectedEmailAddress?.let {
-                                    onRefreshAction()
-                                }
-                            },
-                            enabled = selectedEmailAddress != null
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = stringResource(id = R.string.refresh)
-                            )
-                        }
-                        IconButton(
-                            onClick = { showClearDialog = true },
-                            enabled = selectedEmailAddress != null
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = stringResource(id = R.string.clear)
-                            )
-                        }
                     },
                     scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.topAppBarColors(

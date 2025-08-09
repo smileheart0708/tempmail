@@ -18,8 +18,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.foundation.layout.Arrangement
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SegmentedButton
@@ -29,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.temp.mail.R
@@ -161,5 +167,28 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 )
             }
         }
+       val context = LocalContext.current
+       Row(
+           modifier = Modifier
+               .fillMaxWidth()
+               .clickable {
+                   val intent = android.content.Intent(android.content.Intent.ACTION_VIEW).apply {
+                       data = android.net.Uri.parse("https://github.com/smileheart0708/tempmail")
+                   }
+                   context.startActivity(intent)
+               }
+               .padding(16.dp),
+           horizontalArrangement = Arrangement.SpaceBetween,
+           verticalAlignment = Alignment.CenterVertically
+       ) {
+           Icon(
+               imageVector = Icons.Default.Info,
+               contentDescription = stringResource(id = R.string.source_code)
+           )
+           Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
+               Text(text = stringResource(id = R.string.source_code))
+               Text(text = stringResource(id = R.string.about_app), style = MaterialTheme.typography.bodySmall)
+           }
+       }
     }
 }

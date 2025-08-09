@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.DrawerValue
@@ -39,6 +40,7 @@ fun MainScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
+    var showClearDialog by remember { mutableStateOf(false) }
 
     // This will hold the action to refresh the currently visible email list.
     var onRefreshAction by remember { mutableStateOf({}) }
@@ -57,6 +59,29 @@ fun MainScreen(
             confirmButton = {
                 Button(onClick = { mainViewModel.clearError() }) {
                     Text(stringResource(id = R.string.ok))
+                }
+            }
+        )
+    }
+
+    if (showClearDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearDialog = false },
+            title = { Text(stringResource(id = R.string.clear_all_emails)) },
+            text = { Text(stringResource(id = R.string.clear_all_emails_confirmation)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        mainViewModel.clearEmailsForSelectedAddress()
+                        showClearDialog = false
+                    }
+                ) {
+                    Text(stringResource(id = R.string.clear))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearDialog = false }) {
+                    Text(stringResource(id = R.string.cancel))
                 }
             }
         )
@@ -137,6 +162,15 @@ fun MainScreen(
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = stringResource(id = R.string.refresh)
+                            )
+                        }
+                        IconButton(
+                            onClick = { showClearDialog = true },
+                            enabled = selectedEmailAddress != null
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = stringResource(id = R.string.clear)
                             )
                         }
                     },

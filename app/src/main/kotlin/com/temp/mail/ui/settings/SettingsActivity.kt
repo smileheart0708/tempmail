@@ -98,76 +98,68 @@ fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel()) {
         "Dark" to stringResource(id = R.string.dark_mode)
     )
     Column {
-        Text(
-            text = stringResource(id = R.string.personalization),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(16.dp)
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = stringResource(id = R.string.theme))
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            MultiChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                themes.forEachIndexed { index, item ->
-                    SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(index = index, count = themes.size),
-                        onCheckedChange = {
-                            viewModel.setTheme(item)
-                        },
-                        checked = theme == item
-                    ) {
-                        Text(themeLabels[item] ?: item)
+        SettingCard(title = stringResource(id = R.string.personalization)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = stringResource(id = R.string.theme))
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                MultiChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                    themes.forEachIndexed { index, item ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = themes.size),
+                            onCheckedChange = {
+                                viewModel.setTheme(item)
+                            },
+                            checked = theme == item
+                        ) {
+                            Text(themeLabels[item] ?: item)
+                        }
                     }
                 }
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = stringResource(id = R.string.dynamic_color))
+                Switch(
+                    checked = isDynamicColor,
+                    onCheckedChange = { viewModel.setDynamicColor(it) }
+                )
+            }
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = stringResource(id = R.string.dynamic_color))
-            Switch(
-                checked = isDynamicColor,
-                onCheckedChange = { viewModel.setDynamicColor(it) }
-            )
+        SettingCard(title = stringResource(id = R.string.mail_rendering_settings)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(text = stringResource(id = R.string.enable_javascript))
+                    Text(
+                        text = stringResource(id = R.string.enable_javascript_summary),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    checked = isJavaScriptEnabled,
+                    onCheckedChange = { viewModel.setJavaScriptEnabled(it) }
+                )
+            }
         }
-       Text(
-           text = stringResource(id = R.string.mail_rendering_settings),
-           style = MaterialTheme.typography.titleSmall,
-           modifier = Modifier.padding(16.dp)
-       )
-       Row(
-           modifier = Modifier
-               .fillMaxWidth()
-               .padding(horizontal = 16.dp),
-           horizontalArrangement = Arrangement.SpaceBetween,
-           verticalAlignment = Alignment.CenterVertically
-       ) {
-           Column {
-               Text(text = stringResource(id = R.string.enable_javascript))
-               Text(
-                   text = stringResource(id = R.string.enable_javascript_summary),
-                   style = MaterialTheme.typography.bodySmall,
-                   color = MaterialTheme.colorScheme.onSurfaceVariant
-               )
-           }
-           Switch(
-               checked = isJavaScriptEnabled,
-               onCheckedChange = { viewModel.setJavaScriptEnabled(it) }
-           )
-       }
     }
 }

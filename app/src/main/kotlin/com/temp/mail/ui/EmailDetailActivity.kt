@@ -26,8 +26,9 @@ import com.temp.mail.ui.viewmodel.EmailDetailViewModel
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
+import android.content.ClipData
+import android.content.ClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
 
 class EmailDetailActivity : ComponentActivity() {
@@ -66,7 +67,7 @@ fun EmailDetailScreen(
     val error by viewModel.error.collectAsState()
     val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
     val verificationCode by viewModel.verificationCode.collectAsState()
-    val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -91,11 +92,14 @@ fun EmailDetailScreen(
                 },
                 actions = {
                     if (verificationCode != null) {
+                        val message = stringResource(id = R.string.verification_code_copied, verificationCode!!)
                         IconButton(onClick = {
-                            clipboardManager.setText(AnnotatedString(verificationCode!!))
+                            val clipboard = context.getSystemService(ClipboardManager::class.java)
+                            val clip = ClipData.newPlainText("Verification Code", verificationCode!!)
+                            clipboard.setPrimaryClip(clip)
                             scope.launch {
                                 snackbarHostState.showSnackbar(
-                                    message = stringResource(id = R.string.verification_code_copied, verificationCode!!),
+                                    message = message,
                                     duration = SnackbarDuration.Short
                                 )
                             }

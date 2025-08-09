@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.temp.mail.data.model.EmailAddress
+import com.temp.mail.data.repository.EmailRepository
 import com.temp.mail.data.repository.TokenRepository
 import com.temp.mail.util.EmailGenerator
 import kotlinx.coroutines.flow.*
@@ -12,7 +13,8 @@ import java.util.*
 
 class MainViewModel(
     private val context: Context,
-    private val tokenRepository: TokenRepository
+    private val tokenRepository: TokenRepository,
+    private val emailRepository: EmailRepository
 ) : ViewModel() {
 
     private val _emailAddresses = MutableStateFlow<List<EmailAddress>>(emptyList())
@@ -75,6 +77,13 @@ class MainViewModel(
             }
         }
     }
+
+    fun clearEmailsForSelectedAddress() {
+        viewModelScope.launch {
+            emailRepository.clearAllEmailCache()
+        }
+    }
+
     fun clearError() {
         _error.value = null
     }

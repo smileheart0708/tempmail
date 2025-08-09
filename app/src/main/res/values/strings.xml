@@ -64,6 +64,12 @@
     <string name="history_mails">History Mails</string>
     <string name="no_history_mails">No history mails</string>
 
+   <!-- Clear emails -->
+   <string name="clear">Clear</string>
+   <string name="cancel">Cancel</string>
+   <string name="clear_all_emails">Clear all emails</string>
+   <string name="clear_all_emails_confirmation">Are you sure you want to clear all emails? This action cannot be undone.</string>
+
     <!-- Mail rendering settings -->
     <string name="mail_rendering_settings">Mail Rendering Settings</string>
     <string name="enable_javascript">Enable JavaScript</string>

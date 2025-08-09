@@ -65,6 +65,12 @@
     <string name="history_mails">历史邮件</string>
     <string name="no_history_mails">暂无历史邮件</string>
 
+   <!-- 清理邮件 -->
+   <string name="clear">清理</string>
+   <string name="cancel">取消</string>
+   <string name="clear_all_emails">清理所有邮件</string>
+   <string name="clear_all_emails_confirmation">您确定要清理所有邮件吗？此操作无法撤销。</string>
+
     <!-- 邮件渲染设置 -->
     <string name="mail_rendering_settings">邮件渲染设置</string>
     <string name="enable_javascript">启用JS脚本</string>

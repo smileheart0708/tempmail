@@ -23,6 +23,7 @@ interface EmailRepository {
     suspend fun getEmailDetails(emailAddress: String, emailId: String, token: String): Result<EmailDetails>
     suspend fun loadHistoryEmails(): Result<List<Email>>
     suspend fun getHistoryEmailDetails(emailId: String): Result<EmailDetails>
+    suspend fun clearAllEmailCache()
     fun clearEmails()
     fun clearError()
 }
@@ -130,6 +131,16 @@ class EmailRepositoryImpl(
             }
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override suspend fun clearAllEmailCache(): Unit = withContext(Dispatchers.IO) {
+        try {
+            val cacheDir = context.cacheDir
+            val jsonFiles = cacheDir.listFiles { _, name -> name.endsWith(".json") }
+            jsonFiles?.forEach { it.delete() }
+        } catch (e: Exception) {
+            // Log or handle exception
         }
     }
 

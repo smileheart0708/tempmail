@@ -21,6 +21,8 @@ This project uses Gradle with Kotlin DSL (.kts files).
 - **Install debug build**: `./gradlew installDebug`
 - **Run single test**: `./gradlew test --tests "ClassName.testMethodName"`
 - **Run tests with coverage**: `./gradlew testDebugUnitTestCoverage`
+- **Lint check**: `./gradlew lint`
+- **Format code**: Use Android Studio's built-in formatter (Ctrl+Alt+L)
 
 ### Release Build
 
@@ -36,7 +38,8 @@ The project has signing configuration in `app/signing.properties`. Use `Release.
 - **Networking**: OkHttp 5.1.0 with custom API service
 - **Data Storage**: DataStore Preferences
 - **Serialization**: Kotlinx Serialization
-- **Build Target**: Android API 36, minimum API 26
+- **Build Target**: Android API 36, minimum API 26, Java 21
+- **AGP Version**: 8.11.0, Kotlin 2.2.0
 
 ### Project Structure
 

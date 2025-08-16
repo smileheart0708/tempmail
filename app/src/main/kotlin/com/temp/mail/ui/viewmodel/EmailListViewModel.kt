@@ -14,52 +14,66 @@ class EmailListViewModel(
 ) : ViewModel() {
 
     val emails: StateFlow<List<Email>> = emailRepository.emails
-    val isLoading: StateFlow<Boolean> = emailRepository.isLoading
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
     val error: StateFlow<String?> = emailRepository.error
+
+    private val _countdown = MutableStateFlow(10)
+    val countdown: StateFlow<Int> = _countdown
 
     private var autoRefreshJob: Job? = null
     private var currentEmailAddress: String? = null
 
     companion object {
         private const val REFRESH_INTERVAL = 10_000L // 10 seconds
+        private const val COUNTDOWN_SECONDS = 10
     }
-
 
     fun loadEmails(emailAddress: String) {
         currentEmailAddress = emailAddress
+        refreshEmails(isManual = false)
+    }
+
+    fun refreshEmails(isManual: Boolean) {
+        if (_isLoading.value) return
         viewModelScope.launch {
-            val authToken = tokenRepository.getCurrentToken()
-            if (authToken != null) {
-                emailRepository.loadEmails(emailAddress, authToken.token)
-                onActive()
-            } else {
-                // 处理token为空的情况
-                emailRepository.clearEmails()
-            }
-        }
-    }
-
-    fun refreshEmails(emailAddress: String) {
-        loadEmails(emailAddress)
-    }
-
-    fun onActive() {
-        autoRefreshJob?.cancel()
-        autoRefreshJob = viewModelScope.launch {
-            while (isActive) {
-                delay(REFRESH_INTERVAL)
+            _isLoading.value = true
+            try {
                 currentEmailAddress?.let {
                     val authToken = tokenRepository.getCurrentToken()
                     if (authToken != null) {
                         emailRepository.loadEmails(it, authToken.token)
+                    } else {
+                        emailRepository.clearEmails()
                     }
                 }
+            } finally {
+                _isLoading.value = false
+                resetAutoRefreshTimer()
             }
         }
     }
 
+    fun onActive() {
+        resetAutoRefreshTimer()
+    }
+
     fun onInactive() {
         autoRefreshJob?.cancel()
+    }
+
+    private fun resetAutoRefreshTimer() {
+        autoRefreshJob?.cancel()
+        autoRefreshJob = viewModelScope.launch {
+            _countdown.value = COUNTDOWN_SECONDS
+            while (isActive && _countdown.value > 0) {
+                delay(1000)
+                _countdown.value--
+            }
+            if (isActive) {
+                refreshEmails(isManual = false)
+            }
+        }
     }
 
     fun clearError() {

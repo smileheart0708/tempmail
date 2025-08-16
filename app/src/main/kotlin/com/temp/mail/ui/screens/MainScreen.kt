@@ -21,6 +21,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.temp.mail.R
 import com.temp.mail.ui.components.AppDrawer
@@ -38,8 +39,9 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val clipboardManager = context.getSystemService(ClipboardManager::class.java)
     
 
     // This will hold the action to refresh the currently visible email list.
@@ -104,10 +106,11 @@ fun MainScreen(
                             style = MaterialTheme.typography.titleMedium,
                             modifier = if (currentAddress != null) {
                                 Modifier.clickable {
-                                    val clipboard = context.getSystemService(ClipboardManager::class.java)
-                                    val clip = ClipData.newPlainText("Email Address", currentAddress)
-                                    clipboard.setPrimaryClip(clip)
-                                    showSnackBar = true
+                                    scope.launch {
+                                        val clip = ClipData.newPlainText("Email Address", currentAddress!!)
+                                        clipboardManager?.setPrimaryClip(clip)
+                                        showSnackBar = true
+                                    }
                                 }
                             } else {
                                 Modifier
@@ -129,6 +132,15 @@ fun MainScreen(
                         }
                     },
                     actions = {
+                        // Show refresh button only when an email address is selected
+                        if (selectedEmailAddress != null) {
+                            IconButton(onClick = onRefreshAction) {
+                                Icon(
+                                    imageVector = Icons.Filled.Refresh,
+                                    contentDescription = stringResource(id = R.string.refresh)
+                                )
+                            }
+                        }
                     },
                     scrollBehavior = scrollBehavior,
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -150,7 +162,7 @@ fun MainScreen(
                     
                     // Update the refresh action and reset scroll behavior whenever the selected email changes.
                     LaunchedEffect(currentEmail, scrollBehavior) {
-                        onRefreshAction = { emailListViewModel.refreshEmails(currentEmail.address) }
+                        onRefreshAction = { emailListViewModel.refreshEmails(isManual = true) }
                         // Reset the scroll behavior to ensure the TopAppBar is visible
                         scrollBehavior.state.heightOffset = 0f
                         scrollBehavior.state.contentOffset = 0f

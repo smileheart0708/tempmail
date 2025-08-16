@@ -32,8 +32,8 @@ android {
         applicationId = "com.temp.mail"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20250809
-        versionName = "1.2.1"
+        versionCode = 20250811
+        versionName = "1.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

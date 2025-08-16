@@ -29,6 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import android.content.ClipData
 import android.content.ClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import kotlinx.coroutines.launch
 
 class EmailDetailActivity : ComponentActivity() {
@@ -67,9 +68,10 @@ fun EmailDetailScreen(
     val error by viewModel.error.collectAsState()
     val isJavaScriptEnabled by viewModel.isJavaScriptEnabled.collectAsState()
     val verificationCode by viewModel.verificationCode.collectAsState()
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+    val clipboardManager = context.getSystemService(ClipboardManager::class.java)
 
     androidx.compose.runtime.LaunchedEffect(emailId, emailAddress, isHistory) {
         if (emailId != null) {
@@ -94,10 +96,9 @@ fun EmailDetailScreen(
                     if (verificationCode != null) {
                         val message = stringResource(id = R.string.verification_code_copied, verificationCode!!)
                         IconButton(onClick = {
-                            val clipboard = context.getSystemService(ClipboardManager::class.java)
-                            val clip = ClipData.newPlainText("Verification Code", verificationCode!!)
-                            clipboard.setPrimaryClip(clip)
                             scope.launch {
+                                val clip = ClipData.newPlainText("Verification Code", verificationCode!!)
+                                clipboardManager?.setPrimaryClip(clip)
                                 snackbarHostState.showSnackbar(
                                     message = message,
                                     duration = SnackbarDuration.Short

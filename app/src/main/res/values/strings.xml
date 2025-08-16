@@ -51,6 +51,7 @@
     <string name="error_title">Error</string>
     <string name="ok">OK</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="copy">Copy</string>
 
     <!-- Email detail screen strings -->
     <string name="email_details">Email Details</string>

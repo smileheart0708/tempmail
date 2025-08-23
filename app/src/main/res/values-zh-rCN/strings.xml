@@ -1,5 +1,4 @@
- <?xml version="1.0" encoding="utf-8"?>
-<resources>
+ <resources>
     <string name="base_url">https://api.mail.cx/api/v1</string>
     <string name="app_name">临时邮箱</string>
     <string name="navigation_drawer_open">打开导航抽屉</string>

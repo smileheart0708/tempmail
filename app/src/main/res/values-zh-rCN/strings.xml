@@ -69,6 +69,8 @@
    <!-- 清理邮件 -->
    <string name="clear">清理</string>
    <string name="cancel">取消</string>
+   <string name="clear_all_emails">清除所有邮件</string>
+   <string name="clear_all_emails_confirmation">您确定要清除所有邮件吗？此操作无法撤销。</string>
    <string name="clear_history">清理历史记录</string>
    <string name="clear_history_confirmation">您确定要清理所有历史邮件吗？此操作无法撤销。</string>
 
@@ -79,6 +81,7 @@
     <string name="github">GitHub</string>
     <string name="from_sender_format">来自: %1$s</string>
     <string name="source_code">关于软件</string>
+    <string name="about_app">关于此应用</string>
     <string name="status_read">已读</string>
     <string name="status_unread">未读</string>
 </resources>

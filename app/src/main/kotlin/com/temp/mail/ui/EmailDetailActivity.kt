@@ -29,7 +29,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import android.content.ClipData
 import android.content.ClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import kotlinx.coroutines.launch
 
 class EmailDetailActivity : ComponentActivity() {

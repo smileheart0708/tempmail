@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+ <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="base_url">https://api.mail.cx/api/v1</string>
     <string name="app_name">临时邮箱</string>
@@ -79,4 +79,6 @@
     <string name="github">GitHub</string>
     <string name="from_sender_format">来自: %1$s</string>
     <string name="source_code">关于软件</string>
+    <string name="status_read">已读</string>
+    <string name="status_unread">未读</string>
 </resources>

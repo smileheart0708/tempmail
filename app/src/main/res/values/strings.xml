@@ -81,4 +81,6 @@
     <string name="from_sender_format">From: %1$s</string>
     <string name="source_code">About</string>
     <string name="about_app">About this App</string>
+    <string name="status_read">Read</string>
+    <string name="status_unread">Unread</string>
 </resources>

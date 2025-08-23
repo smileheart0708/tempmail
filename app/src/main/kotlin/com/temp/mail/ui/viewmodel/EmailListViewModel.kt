@@ -76,6 +76,24 @@ class EmailListViewModel(
         }
     }
 
+    fun markEmailAsRead(emailId: String) {
+        viewModelScope.launch {
+            val email = emails.value.find { it.id == emailId }
+            if (email != null && !email.seen) {
+                currentEmailAddress?.let { address ->
+                    val authToken = tokenRepository.getCurrentToken()
+                    if (authToken != null) {
+                        val result = emailRepository.markEmailAsRead(address, emailId, authToken.token)
+                        if (result.isSuccess) {
+                            refreshEmails(isManual = true)
+                        }
+                        // Failure is silently ignored as per requirements
+                    }
+                }
+            }
+        }
+    }
+
     fun clearError() {
         emailRepository.clearError()
     }

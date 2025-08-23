@@ -21,6 +21,7 @@ interface EmailRepository {
 
     suspend fun loadEmails(emailAddress: String, token: String)
     suspend fun getEmailDetails(emailAddress: String, emailId: String, token: String): Result<EmailDetails>
+    suspend fun markEmailAsRead(emailAddress: String, emailId: String, token: String): Result<Unit>
     suspend fun loadHistoryEmails(): Result<List<Email>>
     fun getHistoryEmails(): StateFlow<List<Email>>
     suspend fun getHistoryEmailDetails(emailId: String): Result<EmailDetails>
@@ -90,6 +91,10 @@ class EmailRepositoryImpl(
             }
         }
         return result
+    }
+
+    override suspend fun markEmailAsRead(emailAddress: String, emailId: String, token: String): Result<Unit> {
+        return mailService.markEmailAsRead(emailAddress, emailId, token)
     }
 
     override fun getHistoryEmails(): StateFlow<List<Email>> {

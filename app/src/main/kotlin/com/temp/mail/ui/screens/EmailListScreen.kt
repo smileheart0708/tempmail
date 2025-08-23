@@ -11,6 +11,8 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.outlined.Email
@@ -126,7 +128,8 @@ fun EmailListScreen(
                 } else {
                     EmailListContent(
                         emails = emails,
-                        emailAddress = emailAddress
+                        emailAddress = emailAddress,
+                        viewModel = viewModel
                     )
                 }
             }
@@ -139,7 +142,8 @@ private fun EmptyState() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -166,7 +170,8 @@ private fun EmptyState() {
 @Composable
 private fun EmailListContent(
     emails: List<Email>,
-    emailAddress: String
+    emailAddress: String,
+    viewModel: EmailListViewModel
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -177,6 +182,7 @@ private fun EmailListContent(
             EmailItem(
                 email = email,
                 onClick = {
+                    viewModel.markEmailAsRead(email.id)
                     val intent =
                         Intent(
                             context,

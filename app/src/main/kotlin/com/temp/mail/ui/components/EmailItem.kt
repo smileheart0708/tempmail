@@ -12,6 +12,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.temp.mail.R
 import com.temp.mail.data.model.Email
+import com.temp.mail.ui.theme.ReadGreen
+import com.temp.mail.ui.theme.UnreadRed
 import com.temp.mail.util.FileLogger
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -101,38 +103,28 @@ fun EmailItem(
 
             Text(
                 text = email.subject,
-                style = if (email.seen)
-                    MaterialTheme.typography.bodyMedium
-                else
-                    MaterialTheme.typography.titleMedium,
-                color = if (email.seen)
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                else
-                    MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
 
-            if (email.size > 0) {
-                val sizeInKB = email.size / 1024.0
-                val formattedSize = String.format("%.1f KB", sizeInKB)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.End
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                Surface(
+                    shape = MaterialTheme.shapes.small,
+                    color = if (email.seen) ReadGreen else UnreadRed
                 ) {
-                    Surface(
-                        shape = MaterialTheme.shapes.small,
-                        color = MaterialTheme.colorScheme.secondaryContainer
-                    ) {
-                        Text(
-                            text = formattedSize,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                        )
-                    }
+                    Text(
+                        text = if (email.seen) stringResource(R.string.status_read) else stringResource(R.string.status_unread),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                    )
                 }
             }
         }

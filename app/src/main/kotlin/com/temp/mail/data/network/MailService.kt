@@ -4,6 +4,8 @@ import com.temp.mail.data.model.Email
 import com.temp.mail.data.model.EmailDetails
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import kotlinx.serialization.json.Json
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +15,7 @@ import java.io.IOException
 interface MailService {
     suspend fun getEmailList(emailAddress: String, token: String): Result<List<Email>>
     suspend fun getEmailDetails(emailAddress: String, emailId: String, token: String): Result<EmailDetails>
+    suspend fun markEmailAsRead(emailAddress: String, emailId: String, token: String): Result<Unit>
 }
 
 class MailServiceImpl(
@@ -91,6 +94,37 @@ class MailServiceImpl(
             }
         } catch (e: Exception) {
             fileLogger.logError("MailService", "GetEmailDetails failed with exception", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun markEmailAsRead(
+        emailAddress: String,
+        emailId: String,
+        token: String
+    ): Result<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val url = "$baseUrl/mailbox/$emailAddress/$emailId"
+            val requestBody = """{"seen":true}""".toRequestBody("application/json".toMediaTypeOrNull())
+            val request = Request.Builder()
+                .url(url)
+                .patch(requestBody)
+                .addHeader("Authorization", "Bearer $token")
+                .build()
+
+            val response = httpClient.newCall(request).execute()
+
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                val errorBody = response.body?.string()
+                val errorMessage = "HTTP ${response.code}: ${response.message}, URL: $url, Body: $errorBody"
+                val exception = IOException(errorMessage)
+                fileLogger.logError("MailService", "MarkEmailAsRead failed", exception)
+                Result.failure(exception)
+            }
+        } catch (e: Exception) {
+            fileLogger.logError("MailService", "MarkEmailAsRead failed with exception", e)
             Result.failure(e)
         }
     }
